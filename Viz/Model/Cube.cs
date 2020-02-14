@@ -8,24 +8,24 @@ namespace Viz.Model
 {
     class Cube : Cell
     {
-        List<Point> points;
+        List<Point3D> points;
 
         //----------------------------------------------Contstructors
-        public Cube(Point[] points){
+        public Cube(Point3D[] points){
             this.points = points.ToList();
         }
 
 
         //----------------------------------------------Interface implementation
-        public void addPoint(Point point)
+        public void addPoint(Point3D point)
         {
             this.points.Add(point);
         }
-        public Point[] getPoints()
+        public Point3D[] getPoints()
         {
             return points.ToArray();
         }
-        public void setPoints(Point[] points)
+        public void setPoints(Point3D[] points)
         {
             this.points = points.ToList();
         }

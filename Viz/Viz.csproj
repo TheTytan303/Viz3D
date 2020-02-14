@@ -54,7 +54,10 @@
     </Compile>
     <Compile Include="Model\Cell.cs" />
     <Compile Include="Model\Cube.cs" />
-    <Compile Include="Model\Point.cs" />
+    <Compile Include="Model\Dimensions\Dimension.cs" />
+    <Compile Include="Model\Dimensions\Extent3D.cs" />
+    <Compile Include="Model\Point\Point.cs" />
+    <Compile Include="Model\Point\Point3D.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">

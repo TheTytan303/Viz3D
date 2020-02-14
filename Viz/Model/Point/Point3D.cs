@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Viz.Model.Dimensions;
 
 namespace Viz.Model
 {
-    class Point
+    class Point3D : Point<Extent3D>
     {
         protected double x, y, z;
         protected uint id;
         protected static uint ids =0;
-
-        public Point(double x, double y, double z){
+        
+        public Point3D(double x, double y, double z){
             this.x = x;
             this.y = y;
             this.z = z;
