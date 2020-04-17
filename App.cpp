@@ -23,21 +23,25 @@ int CubeCell::ids = 0;
 int App::Go()
 {
 	std::string file = "sample.txt";
-	file = "100.txt";
-	{
-		DataMiner miner(file);
-		int n = 100;
-		for (int i = 0; i < n; i++) {
-			celled.push_back(miner.GetNextCell());
-			for (int j = 0; j < n; j++) {
-				miner.GetNextCell();
-			}
-		}
-		miner.closeFile();
+	//file = "100.txt";
+	file = "state_10x10x10.txt";
+	DataMiner miner(file);
+	int n = 1000;
+	for (int i = 0; i < n; i++) {
+		celled.push_back(miner.GetNextCell());
 	}
-
-
-
+	//try {
+	//	celled.push_back(miner.GetCellAt(2999));
+	//	celled.push_back(miner.GetCellAt(155));
+	//	celled.push_back(miner.GetCellAt(2999));
+	//	celled.push_back(miner.GetCellAt(150));
+	//	celled.push_back(miner.GetCellAt(300));
+	//}
+	//catch (...) {
+	//	MessageBoxA(nullptr, "out of file", "kurdebele", MB_OK);
+	//};
+	//miner.closeFile();
+	
 	MSG msg;
 	BOOL gResult;
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
@@ -47,13 +51,13 @@ int App::Go()
 			MessageBoxA(nullptr, "who did just pressed menu!? >:(", "kurdebele", MB_OK);
 			//wnd.kbd.Flush;
 		}
-
 		while (!wnd.mouse.IsEmpty()) {
 			const auto e = wnd.mouse.Read();
 			//wnd.SetWindowTitle("try");
 			switch (e.GetType()) {
 			case Mouse::Event::Type::Leave:
 			{
+				//celled.push_back(miner.GetCellAt(0));
 				std::ostringstream oss;
 				oss << "Gone: (" << e.GetPosX() << "," << e.GetPosY() << ")";
 				wnd.SetWindowTitle(oss.str());
@@ -61,6 +65,14 @@ int App::Go()
 			}
 			case Mouse::Event::Type::LPress:
 			{
+				try 
+				{
+					//celled.push_back(miner.GetNextCell());
+				}
+				catch (...)
+				{
+					MessageBoxA(nullptr, "out of file", "kurdebele", MB_OK);
+				};
 				std::ostringstream oss;
 				//unsigned short* coords = cells[0].getCoords();
 				oss << "LBB: ";
@@ -71,6 +83,14 @@ int App::Go()
 			}
 			case Mouse::Event::Type::RPress:
 			{
+				try
+				{
+					celled.pop_back();
+				}
+				catch (...)
+				{
+					//MessageBoxA(nullptr, "out of cells", "kurdebele", MB_OK);
+				};
 				std::ostringstream oss;
 				//unsigned short* coords = cells[0].getCoords();
 				oss << "LFT: ";
