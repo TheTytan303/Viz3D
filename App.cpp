@@ -13,35 +13,26 @@
 App::App()
 	:
 	wnd(800, 600, L"App window")
-{}
+{
+	std::string file = "sample.txt";
+	file = "100.txt";
+	//file = "state_10x10x10.txt";
+	//file = "state_20x20x20.txt";
+	DataMiner miner(file);
+	int n = 10000;
+	for (int i = 0; i < n; i++) {
+		cells.push_back( move(miner.GetNextCell( wnd.Gfx() )) );
+	}
+	wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 100.0f));
+	
+}
 float pX = 0;
 float pY = 0;
 int cX = 0;
 int cY = 0;
-float size = 7;
-int CubeCell::ids = 0;
+float size = 130;
 int App::Go()
 {
-	std::string file = "sample.txt";
-	//file = "100.txt";
-	file = "state_10x10x10.txt";
-	DataMiner miner(file);
-	int n = 1000;
-	for (int i = 0; i < n; i++) {
-		celled.push_back(miner.GetNextCell());
-	}
-	//try {
-	//	celled.push_back(miner.GetCellAt(2999));
-	//	celled.push_back(miner.GetCellAt(155));
-	//	celled.push_back(miner.GetCellAt(2999));
-	//	celled.push_back(miner.GetCellAt(150));
-	//	celled.push_back(miner.GetCellAt(300));
-	//}
-	//catch (...) {
-	//	MessageBoxA(nullptr, "out of file", "kurdebele", MB_OK);
-	//};
-	//miner.closeFile();
-	
 	MSG msg;
 	BOOL gResult;
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
@@ -57,7 +48,6 @@ int App::Go()
 			switch (e.GetType()) {
 			case Mouse::Event::Type::Leave:
 			{
-				//celled.push_back(miner.GetCellAt(0));
 				std::ostringstream oss;
 				oss << "Gone: (" << e.GetPosX() << "," << e.GetPosY() << ")";
 				wnd.SetWindowTitle(oss.str());
@@ -74,7 +64,6 @@ int App::Go()
 					MessageBoxA(nullptr, "out of file", "kurdebele", MB_OK);
 				};
 				std::ostringstream oss;
-				//unsigned short* coords = cells[0].getCoords();
 				oss << "LBB: ";
 				wnd.SetWindowTitle(oss.str());
 				cX = e.GetPosX();
@@ -83,16 +72,7 @@ int App::Go()
 			}
 			case Mouse::Event::Type::RPress:
 			{
-				try
-				{
-					celled.pop_back();
-				}
-				catch (...)
-				{
-					//MessageBoxA(nullptr, "out of cells", "kurdebele", MB_OK);
-				};
 				std::ostringstream oss;
-				//unsigned short* coords = cells[0].getCoords();
 				oss << "LFT: ";
 				wnd.SetWindowTitle(oss.str());
 				cX = e.GetPosX();
@@ -101,26 +81,6 @@ int App::Go()
 			}
 			case Mouse::Event::Type::LRelease:
 			{
-				Cell::Vertex tmp;
-				std::ostringstream oss;
-				oss << "coords: ";
-				tmp = celled.at(0).getVertices()[4];
-				oss <<tmp.pos.x;
-				oss << " | " ;
-				oss << tmp.pos.y;
-				oss << " | ";
-				oss << tmp.pos.z;
-				
-				tmp = celled.at(0).getVertices()[7];
-				oss << "   ||   ";
-				oss << tmp.pos.x;
-				oss << " | ";
-				oss << tmp.pos.y;
-				oss << " | ";
-				oss << tmp.pos.z;
-				oss << " | ";
-				wnd.SetWindowTitle(oss.str());
-				break;
 			}
 			case Mouse::Event::Type::Move: 
 			{
@@ -135,14 +95,14 @@ int App::Go()
 					float prosta2A = (float)(0 - e.GetPosY()) / (float)(0 - e.GetPosX());
 					cX = e.GetPosX();
 					cY = e.GetPosY();
-					pX += std::abs((prosta1A - prosta2A) / (prosta1A * prosta2A + 1));
+					pX -= (prosta1A - prosta2A) / (prosta1A * prosta2A + 1);
 				}
 				if (e.RightIsPressed()) {
 					float prosta1A = (float)(0 - cY) / (float)(0 - cX);
 					float prosta2A = (float)(0 - e.GetPosY()) / (float)(0 - e.GetPosX());
 					cX = e.GetPosX();
 					cY = e.GetPosY();
-					pY += std::abs((prosta1A - prosta2A) / (prosta1A * prosta2A + 1));
+					pY += (prosta1A - prosta2A) / (prosta1A * prosta2A + 1);
 				}
 				break;
 			}
@@ -175,9 +135,10 @@ int App::Go()
 
 void App::DoFrame()
 {
-	wnd.Gfx().ClearBuffer(0.1f,0.9f,0.5f);
-	for (int i = 0; i < celled.size(); i++) {
-		wnd.Gfx().DrawTestTriangle(&celled.at(i), pX, pY, 0, size);
+	wnd.Gfx().ClearBuffer(0.1f, 0.9f, 0.9f);
+	for (auto& c : cells) {
+		c->Update( pX, pY, 0, 0, 0, size);
+		c->Draw(wnd.Gfx());
 	}
 	wnd.Gfx().EndFrame();
 }

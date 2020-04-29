@@ -1,15 +1,9 @@
-struct VSOut{
-	float4 pos : SV_Position;
-};
-
-cbuffer cbuf 
+cbuffer CBuf 
 {
 	matrix transform;
 };
 
-VSOut main(float3 pos : Position) 
+float4 main(float3 pos : Position) : SV_Position
 {
-	VSOut returnVale;
-	returnVale.pos = mul(float4(pos, 1.0f),transform);
-	return returnVale;
+	return mul(float4(pos, 1.0f),transform);
 }

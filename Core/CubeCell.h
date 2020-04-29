@@ -1,49 +1,52 @@
 #pragma once
 #include "Cell.h"
+#include "Graphics.h"
+#include "DrawableBase.h"
 #include <vector>
 #include <string>
 
 /*
-	Vertex verticies - komÃ³rka szeÅ›cienna przechowuje poÅ‚oÅ¼enie swoich 8 wierzchoÅ‚kÃ³w - obliczone na podstawie rozmiaru caÅ‚kowitego siatki
+	Vertex verticies - komórka szeœcienna przechowuje po³o¿enie swoich 8 wierzcho³ków - obliczone na podstawie rozmiaru ca³kowitego siatki
 	
-	color - kazda szeÅ›cienna komÃ³rka pamiÄ™ta swÃ³j kolor do narysowania (w postaci 3x float: 0.0f - 1.0f) - aktualnie
-	// mozna zmieniÄ‡ na 3 unsigned shorty (mniejszy nakÅ‚ad danych?) 
-	// albo przechowywaÄ‡ id ziarna do ktÃ³rego komÃ³rka naleÅ¼y, a w "ziarnie" niech znajdujÄ… siÄ™ 3x float i pewnie jego wÅ‚asciwoÅ›ci
-	// albo kolory przechowywaÄ‡ w DataMiner
+	color - kazda szeœcienna komórka pamiêta swój kolor do narysowania (w postaci 3x float: 0.0f - 1.0f) - aktualnie
+	// mozna zmieniæ na 3 unsigned shorty (mniejszy nak³ad danych?) 
+	// albo przechowywaæ id ziarna do którego komórka nale¿y, a w "ziarnie" niech znajduj¹ siê 3x float i pewnie jego w³asciwoœci
+	// albo kolory przechowywaæ w DataMiner
 
-	valuesNames - wÅ‚aÅ›ciwoÅ›ci komÃ³rki specyfikowane w danych wejÅ›ciowych 
-	//moÅ¼na przechowywaÄ‡ jednÄ… talicÄ™ nazw, a nie w kaÅ¼dej komÃ³rce (static? - zakÅ‚adaÅ‚by, Å¼e kaÅ¼da komÃ³rka bÄ™dzie miaÅ‚a takie same rodzaje wÅ‚aÅ›ciwoÅ›ci)
-	//albo przechowywaÄ‡ w DataMiner
+	position - 
 
-	values - wÅ‚aÅ›ciwoÅ›ci komÃ³rki specyfikowane w danych wejÅ›ciowych
+	valuesNames - w³aœciwoœci komórki specyfikowane w danych wejœciowych 
+	//mo¿na przechowywaæ jedn¹ talicê nazw, a nie w ka¿dej komórce (static? - zak³ada³by, ¿e ka¿da komórka bêdzie mia³a takie same rodzaje w³aœciwoœci)
+	//albo przechowywaæ w DataMiner
 
-	konstruktor - rozmiar siatki potrzebny do obliczenia bezwzglÄ™dnych pozycji wierzchoÅ‚kÃ³w komÃ³rki
+	values - w³aœciwoœci komórki specyfikowane w danych wejœciowych
+
+	konstruktor - rozmiar siatki potrzebny do obliczenia bezwzglêdnych pozycji wierzcho³ków komórki
 */
 
 
-class CubeCell : public Cell
+class CubeCell : public Cell, public DrawableBase<CubeCell>
 {
-private:
-	static int ids;
 public:
-	unsigned short coords[3];
+	int coords[3];
 	int id;
-	Vertex vertices[8];
 	std::vector<float> color;
 	//std::vector<std::string> valuesNames;
 	std::vector<float> values;
+private:
+	float angleX, angleY, angleZ, x, y, z;
+	float size;
 public:
-	CubeCell(unsigned short* meshSize, unsigned short x, unsigned short y, unsigned short z, std::vector<float> color, std::vector<float> values);
-	//CubeCell(const CubeCell&) = delete;
-	CubeCell& operator=(const CubeCell&) = delete;
-	Vertex* getVertices();
+	CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned short y, unsigned short z, std::vector<float> color, std::vector<float> values, Graphics& gfx);
+	CubeCell(CubeCell& cell) = default;
 	std::vector<float> getColor();
 
 	// Inherited via Cell
-	virtual unsigned short* getCoords() override;
+	int* getCoords() override;
+	int getId() override;
+	std::vector<float> getDetails() override;
 
-	virtual int getId() override;
-
-	virtual std::vector<float> getDetails() override;
-
+	//Inharited via Drawable
+	DirectX::XMMATRIX GetTransformXM() const noexcept override;
+	void Update(float angleX, float angleY, float angleZ, float x, float y, float z) noexcept override;
 };

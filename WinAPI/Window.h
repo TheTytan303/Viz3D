@@ -5,6 +5,12 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "macros.h"
+
+/*
+	Reprezentacja okna
+*/
+
 class Window
 {
 private:
@@ -59,6 +65,3 @@ private:
 	HWND hWnd;
 	std::unique_ptr<Graphics> pGfx;
 };
-//error exception helper macro
-#define CWND_EXCEPT( hr ) Window::Exception( __LINE__,__FILE__,hr )
-#define CWND_LAST_EXCEPT() Window::Exception( __LINE__,__FILE__,GetLastError() )
