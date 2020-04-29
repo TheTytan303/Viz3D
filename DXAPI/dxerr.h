@@ -13,6 +13,10 @@
 
 // This version only supports UNICODE.
 
+
+/*
+	Obs³uga wyj¹tków rzucanych przez DirectX
+*/
 #pragma once
 
 #if !defined(NOMINMAX)
@@ -30,7 +34,7 @@ extern "C" {
 // DXGetErrorString
 //--------------------------------------------------------------------------------------
 const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr );
-const CHAR* WINAPI DXGetErrorStringA(_In_ HRESULT hr);
+const char const* WINAPI DXGetErrorStringA(_In_ HRESULT hr);
 
 #define DXGetErrorString DXGetErrorStringW
 

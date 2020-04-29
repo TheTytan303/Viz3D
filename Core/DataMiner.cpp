@@ -31,7 +31,7 @@ DataMiner::~DataMiner() noexcept
 void DataMiner::closeFile() noexcept {
 	this->file.close();
 }
-CubeCell DataMiner::GetNextCell()
+std::unique_ptr<CubeCell> DataMiner::GetNextCell(Graphics& gfx)
 {
 	if (file.eof()) {
 		throw "end of file";
@@ -48,10 +48,11 @@ CubeCell DataMiner::GetNextCell()
 		values.push_back(tmp);
 	}
 	std::vector<float> color = getColorOf(values[0]);
-	CubeCell returnVale(meshSize, x, y, z, color, values);
+	//CubeCell returnVale(1, meshSize, x, y, z, color, values, gfx);//TODO ID
+	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(1, meshSize, x, y, z, color, values, gfx);
 	return returnVale;
 }
-CubeCell DataMiner::GetCellAt(int index){
+std::unique_ptr<CubeCell> DataMiner::GetCellAt(int index, Graphics& gfx){
 	file.seekg(file.beg);
 	std::string cline;
 	for (int i = 0; i < index; i++)
@@ -73,7 +74,7 @@ CubeCell DataMiner::GetCellAt(int index){
 		values.push_back(tmp);
 	}
 	std::vector<float> color = getColorOf(values[0]);
-	CubeCell returnVale(meshSize, x, y, z, color, values);
+	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(index, meshSize, x, y, z, color, values, gfx);
 	return returnVale;
 };
 unsigned short* DataMiner::GetMeshSize() noexcept

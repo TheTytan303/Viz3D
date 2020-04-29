@@ -4,7 +4,9 @@
 #include <Windows.h>
 #include "Mouse.h"
 
-
+/*
+	obs³uga myszy z poziomu WinAPI
+*/
 //current mouse:
 std::pair<int, int> Mouse::GetPos() const noexcept {
 	return { x,y };

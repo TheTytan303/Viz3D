@@ -1,13 +1,13 @@
 #pragma once
 #include <vector>
 /*
-	Reprezentacja komÃ³rki :
-	struktura "vertex" reprezentuje wierzchoÅ‚ek, potrzebne do rysowania w przestrzeni przez DirectX 
-	// oraz przechowuje kolory w tych wierzchoÅ‚kach
-	getCoords - zwraca wspÃ³Å‚rzÄ™dne tej komÃ³rki w caÅ‚lej strukturze, zwrÃ³ci tablicÄ™ 3x unsigned short
-	getDetails - zwraca tablicÄ™ float'Ã³w, ktÃ³re reprezentujÄ… parametry komÃ³rki
+	Reprezentacja komórki :
+	struktura "vertex" reprezentuje wierzcho³ek, potrzebne do rysowania w przestrzeni przez DirectX 
+	// oraz przechowuje kolory w tych wierzcho³kach
+	getCoords - zwraca wspó³rzêdne tej komórki w ca³lej strukturze, zwróci tablicê 3x unsigned short
+	getDetails - zwraca tablicê float'ów, które reprezentuj¹ parametry komórki
 */
-class Cell
+class Cell 
 {
 public:
 	struct Vertex {
@@ -16,15 +16,10 @@ public:
 			float y;
 			float z;
 		} pos;
-		struct {
-			float r;
-			float g;
-			float b;
-		}color;
 	};
 public:
 	//
-	virtual unsigned short* getCoords() = 0;
+	virtual int* getCoords() = 0;
 	virtual int getId() = 0;
 	virtual  std::vector<float> getDetails() = 0;
 

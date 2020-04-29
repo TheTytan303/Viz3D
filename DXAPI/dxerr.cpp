@@ -14,7 +14,8 @@
 // This version only supports UNICODE.
 #include <comdef.h> 
 #include "dxerr.h"
-
+#include <comdef.h> 
+#include <string> 
 #include <stdio.h>
 #include <algorithm>
 
@@ -3443,16 +3444,16 @@ const WCHAR* WINAPI DXGetErrorStringW( _In_ HRESULT hr )
         default: return L"Unknown error.";
     }
 }
-const char* WINAPI DXGetErrorStringA(_In_ HRESULT hr) {
+const char const* WINAPI DXGetErrorStringA(_In_ HRESULT hr) {
 
     const WCHAR* wc = DXGetErrorStringW(_In_  hr);
-    //_bstr_t b(wc);
-    //const char* output = b;
-    char output[256];
+    _bstr_t b(wc);
+    const char* output = b;
+    //char output[256];
     //const WCHAR* wc = L"Hellow World";
-    sprintf(output, "%ws", wc);
+    //sprintf(output, "%ws", wc);
     
-    return "toString";
+    return output;
 }
 //--------------------------------------------------------------------------------------
 #undef CHK_ERR

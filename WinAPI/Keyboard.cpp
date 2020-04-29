@@ -3,6 +3,11 @@
 #include <bitset>
 #include <queue>
 
+
+/*
+	obs³uga klawiatury z poziomu WinAPI
+*/
+
 bool Keyboard::KeyIsPressed(unsigned char keycode) const noexcept {
 	return keystates[keycode];
 };
