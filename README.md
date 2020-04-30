@@ -3,6 +3,7 @@ TODO:
  - 'KnowHow'
  - uaktualnić opisy w plikach nagłówkowych
  - wstawić pliki projektu
+ - podstawowe GUI
 
 Q:
  + Czy jest ograniczenie co do liczby różnych ziaren? (ile bajtów potrzebuję na określenie ID ziarna)
