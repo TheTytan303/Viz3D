@@ -162,6 +162,10 @@ void App::mineData()
 	cells.clear();
 	try 
 	{
+		if (n > 100000) 
+		{
+			n = 100000;
+		}
 		if (n != 0) 
 		{
 			for (int i = 0; i < n; i++) {
@@ -170,7 +174,8 @@ void App::mineData()
 		}
 		else
 		{
-			for (;;) {
+			n = 100000;
+			for (int i = 0; i < n; i++) {
 				cells.push_back(move(pMiner->GetNextCell(wnd.Gfx())));
 			}
 		}
