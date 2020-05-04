@@ -6,16 +6,78 @@
 #include "Topology.h"
 #include "InputLayout.h"
 #include "TransformCbuf.h"
-std::vector<float> CubeCell::getColor()
+#include <cstdlib>
+#include <ctime>
+#include <memory>
+//--------------------=Static=----------------
+std::vector<std::string> CubeCell::getNames() noexcept
 {
-	return color;
+	return valuesNames;
 }
+void CubeCell::addName(std::string name) noexcept
+{
+	CubeCell::valuesNames.push_back(name);
+}
+void CubeCell::setNames(std::vector<std::string> names) noexcept
+{
+	CubeCell::valuesNames = names;
+}
+std::shared_ptr<std::vector<float>> CubeCell::getColorOf(int grain) noexcept
+{
+	return CubeCell::colors.at(grain);
+}
+bool CubeCell::addColor(int grain) noexcept
+{
+	if (colors.count(grain)) {
+		std::shared_ptr<std::vector<float>> returnVale = std::make_shared<std::vector<float>>();
+		for (int i = 0; i < 3; i++) {
+			returnVale->push_back(static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
+		}
+		colors[grain] = returnVale;
+		return true;
+	}
+	else
+	{
+		std::shared_ptr<std::vector<float>> returnVale = std::make_shared<std::vector<float>>();
+		for (int i = 0; i < 3; i++) {
+			returnVale->push_back(static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
+		}
+		colors[grain] = returnVale;
+		return false;
+	}
+}
+bool CubeCell::setColor(int grain,const std::vector<float> color) noexcept
+{
+	if (colors.count(grain)) {
+		colors[grain] = std::make_shared<std::vector<float>>(color);
+		return true;
+	}
+	else
+	{
+		colors[grain] = std::make_shared<std::vector<float>>(color);
+		return false;
+	}
+}
+//inits:
 float CubeCell::size = 0.5f;
-CubeCell::CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned short y, unsigned short z, std::vector<float> color, std::vector<float> values, Graphics& gfx)
+std::map<int, std::shared_ptr<std::vector<float>>> CubeCell::colors = {};
+std::vector<std::string> CubeCell::valuesNames = {};
+
+
+//--------------------=non-Static=----------------
+std::shared_ptr<std::vector<float>> CubeCell::getColor()
+{
+	return colors.at(grain);
+}
+CubeCell::CubeCell(int id, 
+	unsigned short* meshSize, 
+	unsigned short x, unsigned short y, unsigned short z, 
+	int grain, std::vector<float> values, Graphics& gfx)
 	:
 	values(values),
-	color(color),
-	id(id)
+	grain(grain)
+	//color(color),
+	//id(id)
 {
 	if (!isStaticInitialized()) {
 		struct Vertex {
@@ -79,7 +141,7 @@ CubeCell::CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned 
 	const ConstantBuffer2 cb2 =
 	{
 		{
-			{color[0], color[1], color[2], 1.0f}
+			{colors.at(grain)->at(0), colors.at(grain)->at(1), colors.at(grain)->at(2), 1.0f}
 		}
 	};
 	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
@@ -89,17 +151,21 @@ CubeCell::CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned 
 	this->coords[2] = z - (meshSize[2] / 2);
 }
 
-int* CubeCell::getCoords()
+short* CubeCell::getCoords() const
 {
-	return coords;
+	return (short*)coords;
 }
 
-int CubeCell::getId()
+int CubeCell::getId() const
 {
 	return id;
 }
+int CubeCell::getGrain() const
+{
+	return grain;
+}
 
-std::vector<float> CubeCell::getDetails()
+std::vector<float> CubeCell::getDetails() const
 {
 	return values;
 }
@@ -121,10 +187,3 @@ void CubeCell::Update(float angleX, float angleY, float angleZ, float x, float y
 	//this->angleZ = angleZ;
 	//this->angleY = angleY;
 }
-
-//float s = 2.0f/(float)meshSize[0];
-//s *= 0.9f;
-//float s = 0.6f;
-//float tmpX = (float)(x*2)/ (float)meshSize[0] -1.0f +(s / 2);
-//float tmpY = (float)(y * 2) / (float)meshSize[1] - 1.0f + (s / 2);
-//float tmpZ = (float)(z * 2) / (float)meshSize[2] - 1.0f + (s / 2);

@@ -21,9 +21,10 @@ public:
 	const char* fileName;
 	unsigned short meshSize[3];
 	//int fileHeight;
-	std::vector<std::string> valuesNames;
+	//std::vector<std::string> valuesNames;
 	std::ifstream file;
-	std::map<int, std::vector<float>> colors;
+	//std::map<int, std::vector<float>> colors;
+	std::vector<int> grains;
 public:
 	DataMiner(const char* fileName);
 	DataMiner(const std::string fileName);
@@ -38,5 +39,5 @@ public:
 	std::unique_ptr<CubeCell> GetCellAt(int index, Graphics& gfx);
 	unsigned short* GetMeshSize() noexcept;
 	std::vector<std::string> GetValuesNames()noexcept;
-	std::vector<float> getColorOf(int id) noexcept;
+	void initGrain(int id) noexcept;
 };

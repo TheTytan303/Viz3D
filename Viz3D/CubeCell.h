@@ -3,7 +3,11 @@
 #include "Graphics.h"
 #include "DrawableBase.h"
 #include <vector>
+#include <memory>
+#include <cstdlib>
+#include <ctime>
 #include <string>
+#include <map>
 
 /*
 	Vertex verticies - komórka szeœcienna przechowuje po³o¿enie swoich 8 wierzcho³ków - obliczone na podstawie rozmiaru ca³kowitego siatki
@@ -27,23 +31,38 @@
 
 class CubeCell : public Cell, public DrawableBase<CubeCell>
 {
-public:
-	int coords[3];
-	int id;
-	std::vector<float> color;
-	//std::vector<std::string> valuesNames;
-	std::vector<float> values;
+//--------------------=Static=----------------
 private:
-	static float size;
+	static std::map<int, std::shared_ptr<std::vector<float>>> colors;
+	static std::vector<std::string> valuesNames;
 public:
-	CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned short y, unsigned short z, std::vector<float> color, std::vector<float> values, Graphics& gfx);
+	static std::vector<std::string> getNames() noexcept;
+	static void addName(std::string name) noexcept;
+	static void setNames(std::vector<std::string> names) noexcept;
+	static std::shared_ptr<std::vector<float>> getColorOf(int grain) noexcept;
+	static bool addColor(int grain) noexcept;
+	static bool setColor(int grain, std::vector<float> color) noexcept;
+
+//--------------------=Fields=----------------
+private:
+	static float size;			//4B
+	short coords[3];			//6B
+	int id;						//4B
+	int grain;					//4B
+	//18b / cell
+	std::vector<float> values;
+
+//--------------------=Methods=----------------
+public:
+	CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned short y, unsigned short z, int grain, std::vector<float> values, Graphics& gfx);
 	CubeCell(CubeCell& cell) = default;
-	std::vector<float> getColor();
+	std::shared_ptr<std::vector<float>> getColor();
 
 	// Inherited via Cell
-	int* getCoords() override;
-	int getId() override;
-	std::vector<float> getDetails() override;
+	short* getCoords() const override;
+	int getId() const override;
+	int getGrain() const override;
+	std::vector<float> getDetails() const override;
 
 	//Inharited via Drawable
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;

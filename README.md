@@ -8,11 +8,14 @@ TODO:
 
 Q:
  + Czy jest ograniczenie co do liczby różnych ziaren? (ile bajtów potrzebuję na określenie ID ziarna)
+ + Czy możemy uznać że siatka nie będzie miała większych rozmiarów? (ile bajtów potrzebuję na określenie ID ziarna)
  + Czy jest ograniczenie co do typu/rozmiaru zmiennych? (tych wartości, których nie wykorzystuję do wizualizacji)
  + Czy siatka będzie zawsze w postaci prostopadłościanu? (zkładam, że nie)
  + Jakie opcje chcemy w GUI?
+ + Czy jakieś dane można uznać za wspólne dla wszystkich komórek w danym ziarnie/
 
-Update 03.05.2020 (Optimization v2):
+
+Update 03.05.2020 (Optimization v2.1):
  + nadal zdecydowanie optyamilzacja (100k pełnych komórek naraz)
  + początek GUI
  + pliki projektu (!)

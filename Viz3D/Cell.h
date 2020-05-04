@@ -19,8 +19,9 @@ public:
 	};
 public:
 	//
-	virtual int* getCoords() = 0;
-	virtual int getId() = 0;
-	virtual  std::vector<float> getDetails() = 0;
+	virtual short* getCoords() const = 0;
+	virtual int getId() const = 0;
+	virtual int getGrain() const = 0;
+	virtual std::vector<float> getDetails()const = 0;
 
 };

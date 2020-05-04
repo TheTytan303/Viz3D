@@ -159,12 +159,13 @@ void App::mineData()
 	
 	int n = (int)size[0] * (int)size[1]* (int)size[2];
 	wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, (float(size[2])*2) + 100.0f));
+	camera.SetCamera((float(size[2]) * 2) + 120.0f, 0,0,0,0,0);
 	cells.clear();
 	try 
 	{
-		if (n > 100000) 
+		if (n > 200000) 
 		{
-			n = 100000;
+			n = 200000;
 		}
 		if (n != 0) 
 		{
@@ -174,7 +175,7 @@ void App::mineData()
 		}
 		else
 		{
-			n = 100000;
+			n = 200000;
 			for (int i = 0; i < n; i++) {
 				cells.push_back(move(pMiner->GetNextCell(wnd.Gfx())));
 			}
