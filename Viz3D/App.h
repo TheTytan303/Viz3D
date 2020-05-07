@@ -21,6 +21,7 @@ public:
 private:
 	void DoFrame();
 	void mineData();
+	std::shared_ptr<CubeCell> getPickedItem(float mouseX, float mouseY);
 private:
 	Camera camera;
 	std::unique_ptr<DataMiner> pMiner;

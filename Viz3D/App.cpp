@@ -6,7 +6,7 @@
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx11.h"
 
-
+#include <DirectXMath.h>
 #include <Wininet.h>
 #include <ShlObj.h>
 #include <iostream>
@@ -218,4 +218,15 @@ void App::DoFrame()
 	//ImGui::Render();
 	//ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 	wnd.Gfx().EndFrame();
+}
+
+std::shared_ptr<CubeCell> App::getPickedItem(float mouseX, float mouseY)
+{
+	
+}
+bool RaySphereIntersect(D3DXVECTOR3 rayOrigin, D3DXVECTOR3 rayDirection, float radius)
+{
+	
+	DirectX::XMFLOAT3 vcector3;
+	return true;
 }

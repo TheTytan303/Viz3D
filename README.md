@@ -1,10 +1,11 @@
 # Viz3D
 TODO:
+ - mousePicking
+ - algorytm do uogólniania
  - 'KnowHow'
- - uaktualnić opisy w plikach nagłówkowych
- - wstawić pliki projektu
  - podstawowe GUI
  - optymalizacja (pytania poniżej)
+
 
 Q:
  + Czy jest ograniczenie co do liczby różnych ziaren? (ile bajtów potrzebuję na określenie ID ziarna)
