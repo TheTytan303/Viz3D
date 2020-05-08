@@ -146,6 +146,7 @@
     <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CubeCell.cpp" />
+    <ClCompile Include="CubeFrame.cpp" />
     <ClCompile Include="CustomException.cpp" />
     <ClCompile Include="DataMiner.cpp" />
     <ClCompile Include="Drawable.cpp" />
@@ -162,6 +163,7 @@
     <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="InputLayout.cpp" />
     <ClCompile Include="Keyboard.cpp" />
+    <ClCompile Include="Line.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="Topology.cpp" />
@@ -176,6 +178,7 @@
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="CubeFrame.h" />
     <ClInclude Include="ConstantBuffer.h" />
     <ClInclude Include="CubeCell.h" />
     <ClInclude Include="CustomException.h" />
@@ -197,6 +200,7 @@
     <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="InputLayout.h" />
     <ClInclude Include="Keyboard.h" />
+    <ClInclude Include="Line.h" />
     <ClInclude Include="macros.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="PixelShader.h" />

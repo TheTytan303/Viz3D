@@ -42,13 +42,13 @@ public:
 	static std::shared_ptr<std::vector<float>> getColorOf(int grain) noexcept;
 	static bool addColor(int grain) noexcept;
 	static bool setColor(int grain, std::vector<float> color) noexcept;
-
+	static float size;			
 //--------------------=Fields=----------------
-private:
-	static float size;			//4B
+public:
 	short coords[3];			//6B
 	int id;						//4B
 	int grain;					//4B
+	short meshCoords[3];			//6B
 	//18b / cell
 	std::vector<float> values;
 
@@ -57,6 +57,11 @@ public:
 	CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned short y, unsigned short z, int grain, std::vector<float> values, Graphics& gfx);
 	CubeCell(CubeCell& cell) = default;
 	std::shared_ptr<std::vector<float>> getColor();
+
+
+	std::vector<DirectX::XMVECTOR> GetTriangles() const noexcept;
+	bool ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept;
+
 
 	// Inherited via Cell
 	short* getCoords() const override;

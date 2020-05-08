@@ -21,6 +21,8 @@ public:
 	void SetCamera(float r, float theta, float phi, float pitch, float roll, float yaw);
 	void SetCamera(DirectX::XMMATRIX);
 
+	DirectX::XMVECTOR getPosition() const noexcept;
+	DirectX::XMVECTOR getDirection() const noexcept;
 
 	//DirectX::XMMatrixRotationY(angleY) *
 	//DirectX::XMMatrixRotationX(angleX) *

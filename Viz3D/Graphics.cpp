@@ -182,8 +182,6 @@ void Graphics::ClearBuffer(float red, float green, float blue) noexcept
 
 void Graphics::DrawIndexed(UINT count) noexcept
 {
-
-	//gfx_throw_info_only
 	pContext->DrawIndexed(count, 0u, 0u);
 }
 

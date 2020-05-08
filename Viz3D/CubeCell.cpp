@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <ctime>
 #include <memory>
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
 //--------------------=Static=----------------
 std::vector<std::string> CubeCell::getNames() noexcept
 {
@@ -69,6 +71,90 @@ std::shared_ptr<std::vector<float>> CubeCell::getColor()
 {
 	return colors.at(grain);
 }
+std::vector<DirectX::XMVECTOR> CubeCell::GetTriangles() const noexcept
+{
+	std::vector<DirectX::XMVECTOR> returnVale;
+	std::vector<Vertex> vertices =
+	{
+		{-1.0f,-1.0f,-1.0f},
+		{ 1.0f,-1.0f,-1.0f},
+		{-1.0f, 1.0f,-1.0f},
+		{ 1.0f, 1.0f,-1.0f},
+		{-1.0f,-1.0f, 1.0f},
+		{ 1.0f,-1.0f, 1.0f},
+		{-1.0f, 1.0f, 1.0f},
+		{ 1.0f, 1.0f, 1.0f},
+	};
+	const std::vector<unsigned short> indecies =
+	{
+		0,2,1, 2,3,1,	//back
+		1,3,5, 3,7,5,	//right
+		2,6,3, 3,6,7,	//top
+		4,5,7, 4,7,6,	//front
+		0,4,2, 2,4,6,	//left
+		0,1,4, 1,5,4,	//bottom
+	};
+
+	return returnVale;
+}
+bool CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept
+{
+	///*
+	std::vector<DirectX::XMVECTOR> vertices =
+	{
+		DirectX::XMVector3Transform(DirectX::XMVectorSet(-1.0f,-1.0f,-1.0f, 0.0f), GetTransformXM()),
+		DirectX::XMVector3Transform(DirectX::XMVectorSet( 1.0f,-1.0f,-1.0f, 0.0f), GetTransformXM()),
+		DirectX::XMVector3Transform(DirectX::XMVectorSet(-1.0f, 1.0f,-1.0f, 0.0f), GetTransformXM()),
+		DirectX::XMVector3Transform(DirectX::XMVectorSet( 1.0f, 1.0f,-1.0f, 0.0f), GetTransformXM()),
+		DirectX::XMVector3Transform(DirectX::XMVectorSet(-1.0f,-1.0f, 1.0f, 0.0f), GetTransformXM()),
+		DirectX::XMVector3Transform(DirectX::XMVectorSet( 1.0f,-1.0f, 1.0f, 0.0f), GetTransformXM()),
+		DirectX::XMVector3Transform(DirectX::XMVectorSet(-1.0f, 1.0f, 1.0f, 0.0f), GetTransformXM()),
+		DirectX::XMVector3Transform(DirectX::XMVectorSet( 1.0f, 1.0f, 1.0f, 0.0f), GetTransformXM())
+	};
+	//*/
+	/*
+	std::vector<DirectX::XMVECTOR> vertices =
+	{
+		DirectX::XMVectorSet(-1.0f,-1.0f,-1.0f, 0.0f),
+		DirectX::XMVectorSet(1.0f,-1.0f,-1.0f, 0.0f),
+		DirectX::XMVectorSet(-1.0f, 1.0f,-1.0f, 0.0f),
+		DirectX::XMVectorSet(1.0f, 1.0f,-1.0f, 0.0f),
+		DirectX::XMVectorSet(-1.0f,-1.0f, 1.0f, 0.0f),
+		DirectX::XMVectorSet(1.0f,-1.0f, 1.0f, 0.0f),
+		DirectX::XMVectorSet(-1.0f, 1.0f, 1.0f, 0.0f),
+		DirectX::XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f),
+	};
+	//*/
+
+
+	//DirectX::XMVectorMul
+
+	const std::vector<unsigned short> indecies =
+	{
+		0,2,1, 2,3,1,	//back
+		1,3,5, 3,7,5,	//right
+		2,6,3, 3,6,7,	//top
+		4,5,7, 4,7,6,	//front
+		0,4,2, 2,4,6,	//left
+		0,1,4, 1,5,4,	//bottom
+	};
+	for (int i = 0; i < indecies.size(); i += 3)
+	{
+		//);
+		bool returnVale = DirectX::TriangleTests::Intersects(
+			origin, direction, 
+			vertices[indecies[i]],
+			vertices[indecies[i+1]],
+			vertices[indecies[i+2]],
+			dist
+		);
+		if (returnVale)
+			return true;
+	}
+	
+	//DirectX::TriangleTests::Intersects();
+	return false;
+}
 CubeCell::CubeCell(int id, 
 	unsigned short* meshSize, 
 	unsigned short x, unsigned short y, unsigned short z, 
@@ -89,14 +175,14 @@ CubeCell::CubeCell(int id,
 		};
 		std::vector<Vertex> vertices =
 		{
-			{-1.0f,-1.0f,-1.0f},
-			{ 1.0f,-1.0f,-1.0f},
-			{-1.0f, 1.0f,-1.0f},
-			{ 1.0f, 1.0f,-1.0f},
-			{-1.0f,-1.0f, 1.0f},
-			{ 1.0f,-1.0f, 1.0f},
-			{-1.0f, 1.0f, 1.0f},
-			{ 1.0f, 1.0f, 1.0f},
+			{-0.5f,-0.5f,-0.5f},
+			{ 0.5f,-0.5f,-0.5f},
+			{-0.5f, 0.5f,-0.5f},
+			{ 0.5f, 0.5f,-0.5f},
+			{-0.5f,-0.5f, 0.5f},
+			{ 0.5f,-0.5f, 0.5f},
+			{-0.5f, 0.5f, 0.5f},
+			{ 0.5f, 0.5f, 0.5f},
 		};
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
@@ -146,16 +232,22 @@ CubeCell::CubeCell(int id,
 	};
 	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+
+
+
 	this->coords[0] = x - (meshSize[0] / 2);
 	this->coords[1] = y - (meshSize[1] / 2);
-	this->coords[2] = z - (meshSize[2] / 2);
+	this->coords[2] = z - (meshSize[1] / 2);
+
+	this->meshCoords[0] = x;
+	this->meshCoords[1] = y;
+	this->meshCoords[2] = z;
 }
 
 short* CubeCell::getCoords() const
 {
 	return (short*)coords;
 }
-
 int CubeCell::getId() const
 {
 	return id;
@@ -178,12 +270,8 @@ DirectX::XMMATRIX CubeCell::GetTransformXM() const noexcept
 	;
 };
 
+
+
 void CubeCell::Update(float angleX, float angleY, float angleZ, float x, float y, float z) noexcept
 {
-	//this->x = x;
-	//this->y = y;
-	//this->z = z;
-	//this->angleX = angleX;
-	//this->angleZ = angleZ;
-	//this->angleY = angleY;
 }

@@ -141,6 +141,12 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\DXAPI</Filter>
     </ClCompile>
+    <ClCompile Include="CubeFrame.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomException.h">
@@ -241,6 +247,12 @@
     </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\DXAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeFrame.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
