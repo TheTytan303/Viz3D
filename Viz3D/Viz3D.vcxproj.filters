@@ -147,6 +147,12 @@
     <ClCompile Include="Line.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ComboCube.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Grid.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomException.h">
@@ -169,12 +175,6 @@
     </ClInclude>
     <ClInclude Include="dxerr.h">
       <Filter>Header Files\DXAPI</Filter>
-    </ClInclude>
-    <ClInclude Include="Cell.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CubeCell.h">
-      <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DataMiner.h">
       <Filter>Core\Header Files</Filter>
@@ -254,12 +254,30 @@
     <ClInclude Include="Line.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ComboCube.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeCell.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
       <Filter>Header Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="PixelShader.hlsl">
+      <Filter>Header Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ComboCubePixelShader.hlsl">
+      <Filter>Header Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="ComboCubeVertexShader.hlsl">
       <Filter>Header Files\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -37,5 +37,4 @@ public:
 
 	//Inharited via Drawable
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
-	void Update(float angleX, float angleY, float angleZ, float x, float y, float z) noexcept override;
 };

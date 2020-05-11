@@ -97,9 +97,8 @@ std::vector<DirectX::XMVECTOR> CubeCell::GetTriangles() const noexcept
 
 	return returnVale;
 }
-bool CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept
+float CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept
 {
-	///*
 	std::vector<DirectX::XMVECTOR> vertices =
 	{
 		DirectX::XMVector3Transform(DirectX::XMVectorSet(-1.0f,-1.0f,-1.0f, 0.0f), GetTransformXM()),
@@ -111,24 +110,8 @@ bool CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, floa
 		DirectX::XMVector3Transform(DirectX::XMVectorSet(-1.0f, 1.0f, 1.0f, 0.0f), GetTransformXM()),
 		DirectX::XMVector3Transform(DirectX::XMVectorSet( 1.0f, 1.0f, 1.0f, 0.0f), GetTransformXM())
 	};
-	//*/
-	/*
-	std::vector<DirectX::XMVECTOR> vertices =
-	{
-		DirectX::XMVectorSet(-1.0f,-1.0f,-1.0f, 0.0f),
-		DirectX::XMVectorSet(1.0f,-1.0f,-1.0f, 0.0f),
-		DirectX::XMVectorSet(-1.0f, 1.0f,-1.0f, 0.0f),
-		DirectX::XMVectorSet(1.0f, 1.0f,-1.0f, 0.0f),
-		DirectX::XMVectorSet(-1.0f,-1.0f, 1.0f, 0.0f),
-		DirectX::XMVectorSet(1.0f,-1.0f, 1.0f, 0.0f),
-		DirectX::XMVectorSet(-1.0f, 1.0f, 1.0f, 0.0f),
-		DirectX::XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f),
-	};
-	//*/
-
-
-	//DirectX::XMVectorMul
-
+	float returnVale = 0.0f;
+	float distance = returnVale;
 	const std::vector<unsigned short> indecies =
 	{
 		0,2,1, 2,3,1,	//back
@@ -140,20 +123,32 @@ bool CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, floa
 	};
 	for (int i = 0; i < indecies.size(); i += 3)
 	{
-		//);
-		bool returnVale = DirectX::TriangleTests::Intersects(
+		
+		distance = 0;
+		DirectX::TriangleTests::Intersects(
 			origin, direction, 
 			vertices[indecies[i]],
 			vertices[indecies[i+1]],
 			vertices[indecies[i+2]],
-			dist
+			distance
 		);
-		if (returnVale)
-			return true;
+		if (distance != 0)
+		{
+			if (returnVale == 0)
+			{
+				returnVale = distance;
+			}
+			else
+			{
+				if (distance < returnVale)
+				{
+					returnVale = distance;
+				}
+			}
+		}
 	}
-	
 	//DirectX::TriangleTests::Intersects();
-	return false;
+	return returnVale;
 }
 CubeCell::CubeCell(int id, 
 	unsigned short* meshSize, 
@@ -175,14 +170,14 @@ CubeCell::CubeCell(int id,
 		};
 		std::vector<Vertex> vertices =
 		{
-			{-0.5f,-0.5f,-0.5f},
-			{ 0.5f,-0.5f,-0.5f},
-			{-0.5f, 0.5f,-0.5f},
-			{ 0.5f, 0.5f,-0.5f},
-			{-0.5f,-0.5f, 0.5f},
-			{ 0.5f,-0.5f, 0.5f},
-			{-0.5f, 0.5f, 0.5f},
-			{ 0.5f, 0.5f, 0.5f},
+			{-1.0f,-1.0f,-1.0f},
+			{ 1.0f,-1.0f,-1.0f},
+			{-1.0f, 1.0f,-1.0f},
+			{ 1.0f, 1.0f,-1.0f},
+			{-1.0f,-1.0f, 1.0f},
+			{ 1.0f,-1.0f, 1.0f},
+			{-1.0f, 1.0f, 1.0f},
+			{ 1.0f, 1.0f, 1.0f},
 		};
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 
@@ -269,9 +264,3 @@ DirectX::XMMATRIX CubeCell::GetTransformXM() const noexcept
 		DirectX::XMMatrixTranslation((float)coords[0], (float)coords[1], (float)coords[2])
 	;
 };
-
-
-
-void CubeCell::Update(float angleX, float angleY, float angleZ, float x, float y, float z) noexcept
-{
-}

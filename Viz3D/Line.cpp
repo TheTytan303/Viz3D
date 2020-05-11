@@ -81,7 +81,3 @@ DirectX::XMMATRIX Line::GetTransformXM() const noexcept
 	return
 		DirectX::XMMatrixScaling(1, 1, 1);
 };
-
-void Line::Update(float angleX, float angleY, float angleZ, float x, float y, float z) noexcept
-{
-}

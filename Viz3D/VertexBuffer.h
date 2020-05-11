@@ -13,7 +13,7 @@ public:
 		:
 		stride(sizeof(T))
 	{
-		//INFOMAN(gfx);
+		INFOMAN(gfx);
 
 		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -24,8 +24,8 @@ public:
 		bufferDesc.StructureByteStride = sizeof(T);
 		D3D11_SUBRESOURCE_DATA sResourceData = {};
 		sResourceData.pSysMem = vertices.data();
-		//GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bufferDesc, &sResourceData, &pVertexBuffer));
-		GetDevice(gfx)->CreateBuffer(&bufferDesc, &sResourceData, &pVertexBuffer);
+		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&bufferDesc, &sResourceData, &pVertexBuffer));
+		//GetDevice(gfx)->CreateBuffer(&bufferDesc, &sResourceData, &pVertexBuffer);
 	}
 	void Bind(Graphics& gfx) noexcept override;
 };

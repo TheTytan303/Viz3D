@@ -32,7 +32,7 @@
 class CubeCell : public Cell, public DrawableBase<CubeCell>
 {
 //--------------------=Static=----------------
-private:
+protected:
 	static std::map<int, std::shared_ptr<std::vector<float>>> colors;
 	static std::vector<std::string> valuesNames;
 public:
@@ -58,9 +58,8 @@ public:
 	CubeCell(CubeCell& cell) = default;
 	std::shared_ptr<std::vector<float>> getColor();
 
-
 	std::vector<DirectX::XMVECTOR> GetTriangles() const noexcept;
-	bool ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept;
+	float ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept;
 
 
 	// Inherited via Cell
@@ -71,5 +70,4 @@ public:
 
 	//Inharited via Drawable
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
-	void Update(float angleX, float angleY, float angleZ, float x, float y, float z) noexcept override;
 };

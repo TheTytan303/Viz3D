@@ -181,7 +181,3 @@ DirectX::XMMATRIX CubeFrame::GetTransformXM() const noexcept
 		DirectX::XMMatrixTranslation((float)coords[0], (float)coords[1], (float)coords[2])
 		;
 };
-
-void CubeFrame::Update(float angleX, float angleY, float angleZ, float x, float y, float z) noexcept
-{
-}

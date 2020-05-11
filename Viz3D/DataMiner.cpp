@@ -6,6 +6,10 @@ DataMiner::DataMiner(const char* fileName)
 {
 	this->fileName = fileName;
 	this->file.open(fileName);
+	if (file.fail())
+	{
+		throw "failed to open file";
+	}
 	std::string cline;
 	getline(this->file, cline);
 

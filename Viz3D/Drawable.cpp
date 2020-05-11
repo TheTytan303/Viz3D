@@ -2,11 +2,11 @@
 
 void Drawable::Draw(Graphics& gfx) const noexcept
 {
-	for (auto& b : binds)
+	for (auto& b : GetStaticBinds())
 	{
 		b->Bind(gfx);
 	}
-	for (auto& b : GetStaticBinds())
+	for (auto& b : binds)
 	{
 		b->Bind(gfx);
 	}

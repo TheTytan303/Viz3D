@@ -86,15 +86,5 @@ DirectX::XMVECTOR Camera::getDirection() const noexcept
 	);
 	raydirection = DirectX::XMVector3Normalize(raydirection);
 	return raydirection;
-
-	/*
-	DirectX::XMVECTOR look = DirectX::XMVectorSet(
-		cos(yaw) * cos(pitch),
-		sin(yaw) * cos(pitch),
-		sin(pitch),
-		0
-	);
-	return look;
-	//*/
 }
 

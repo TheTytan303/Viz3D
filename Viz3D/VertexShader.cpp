@@ -3,11 +3,11 @@
 
 VertexShader::VertexShader(Graphics& gfx, LPCWSTR filename)
 {
-	//INFOMAN(gfx);
+	INFOMAN(gfx);
 	//Microsoft::WRL::ComPtr<ID3DBlob>  pBlob;
 	D3DReadFileToBlob(filename, &pBytecodeBlob);
-	//GFX_THROW_INFO(GetDevice(gfx)->CreateVertexShader(pBytecodeBlob->GetBufferPointer(), pBytecodeBlob->GetBufferSize(), nullptr, &pVertexShader));
-	GetDevice(gfx)->CreateVertexShader(pBytecodeBlob->GetBufferPointer(), pBytecodeBlob->GetBufferSize(), nullptr, &pVertexShader);
+	GFX_THROW_INFO(GetDevice(gfx)->CreateVertexShader(pBytecodeBlob->GetBufferPointer(), pBytecodeBlob->GetBufferSize(), nullptr, &pVertexShader));
+	//GetDevice(gfx)->CreateVertexShader(pBytecodeBlob->GetBufferPointer(), pBytecodeBlob->GetBufferSize(), nullptr, &pVertexShader);
 }
 
 void VertexShader::Bind(Graphics& gfx) noexcept
