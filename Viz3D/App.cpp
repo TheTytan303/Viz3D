@@ -78,7 +78,7 @@ int App::Go()
 			case Mouse::Event::Type::LPress:
 			{
 				frames.clear();
-				if(getPickedItem(e.GetPosX(), e.GetPosY(), 800, 600))
+				if((picked = getPickedItem(e.GetPosX(), e.GetPosY(), 800, 600)) != nullptr)
 					ShowPickedFrame();
 				break;
 			}
@@ -158,19 +158,20 @@ void App::mineData()
 		MessageBoxA(nullptr, "file not found", "Error", MB_OK);
 		return;
 	}
+	grid.release();
 	unsigned short* size = pMiner->meshSize;
 	
 	int n = (int)size[0] * (int)size[1]* (int)size[2];
 	//wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(0, 0, 1.0f, (float(size[2])*2) + 100.0f));
 	wnd.SetWindowTitleW(filepath);
-	if (size[2] != 0 && size[2] >100)
+	if (size[2] != 0 && size[2] >=100)
 	{
-		camera.SetCamera(size[2], 0, 0, 0, 0, 0);
+		camera.SetCamera(size[2]*2.0f, 0, 0, 0, 0, 0);
 		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, size[2]*2));
 	}
 	else
 	{
-		camera.SetCamera(30, 0, 0, 0, 0, 0);
+		camera.SetCamera(size[2] * 2.0f, 0, 0, 0, 0, 0);
 		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, 200.0f));
 	}
 	cells.clear();
@@ -178,9 +179,9 @@ void App::mineData()
 	lines.clear();
 	try 
 	{
-		if (n > 100000) 
+		if (n > 1000000) 
 		{
-			n = 100000;
+			n = 1000000;
 		}
 		if (n != 0) 
 		{
@@ -267,6 +268,7 @@ void App::DoFrame()
 		if (grid != nullptr)
 		{
 			grid->Draw(wnd.Gfx());
+			//grid->getCell(5,5,5)->Draw(wnd.Gfx());
 		}
 	}
 	for (auto& f : frames) {
@@ -409,33 +411,33 @@ std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenW
 	//	std::make_unique<Line>(v1,v2,1,0,0,wnd.Gfx())
 	//)
 	//);
-
-	int n = (int)cells.size();
-	float lastOne = 0.0f;
-	for (int i = 0; i < n; i++)
-	{
-		cells.at(i).get()->GetTransformXM();
-		float hitDistance = cells.at(i).get()->ifHit(rayOrigin, rayDirection, 0);
-		if(hitDistance != 0)
-		{
-			if (lastOne == 0.0)
-			{
-				picked = cells[i];
-				lastOne = hitDistance;
-			}
-			else
-			{
-				if (lastOne > hitDistance)
-				{
-					picked = cells[i];
-					lastOne = hitDistance;
-				}
-			}
-		}
-	}
-	if(lastOne != 0.0f)
-		return picked;
-	return nullptr;
+	return grid->ifHit(rayOrigin, rayDirection);
+	//int n = (int)cells.size();
+	//float lastOne = 0.0f;
+	//for (int i = 0; i < n; i++)
+	//{
+	//	cells.at(i).get()->GetTransformXM();
+	//	float hitDistance = cells.at(i).get()->ifHit(rayOrigin, rayDirection, 0);
+	//	if(hitDistance != 0)
+	//	{
+	//		if (lastOne == 0.0)
+	//		{
+	//			picked = cells[i];
+	//			lastOne = hitDistance;
+	//		}
+	//		else
+	//		{
+	//			if (lastOne > hitDistance)
+	//			{
+	//				picked = cells[i];
+	//				lastOne = hitDistance;
+	//			}
+	//		}
+	//	}
+	//}
+	//if(lastOne != 0.0f)
+	//	return picked;
+	//return nullptr;
 }
 void App::ShowPickedFrame()
 {

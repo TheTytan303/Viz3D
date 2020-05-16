@@ -180,7 +180,7 @@ CubeCell::CubeCell(
 			{ 1.0f, 1.0f, 1.0f},
 		};
 		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
-
+		/*
 		const std::vector<unsigned short> indecies =
 		{
 			0,2,1, 2,3,1,	//back
@@ -191,12 +191,15 @@ CubeCell::CubeCell(
 			0,1,4, 1,5,4,	//bottom
 		};
 		//*/
-		/*
 		const std::vector<unsigned short> indecies =
 		{
-			0, 1, 2, 3, 7,
-			1, 5, 0, 4, 6,
-			2, 7
+			2,3,
+			0,1,
+			5,3,
+			7,2,
+			6,0,
+			4,5,
+			6,7
 		};
 		//*/
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
@@ -213,8 +216,8 @@ CubeCell::CubeCell(
 		};
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-		//AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP));
+		//AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP));
 	}
 	else
 	{

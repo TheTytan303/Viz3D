@@ -2,18 +2,26 @@
 TODO:
  - mousePicking (part III)
  - graficzna interpretacja zmiennych
- - algorytm do uogólniania
- - 'KnowHow'
  - optymalizacja (Instancing)
+ - optymalizacja ładowania
+ - optymalizacja pamięciowa (żre więcej RAMu niż Chrome, nie uruchamiać siatek większych niż 100x100x100)
+ - algorytm do uogólniania
 
 
- Update 16.05.2020 (file picking)
+Update 16.05.2020 (The Grid)
+ + prosty (naiwny?) algorytm do wyznaczania komórek na zewnątrz (które wymagają wyświetlania)
+ + optymalizacja mousePicking dla dużych struktur
+ + duże pliki ładują się nadal długo
+ + drobne optymalizacje (triangleStrip)
+ + rozszerzone ograniczenie dla ładowanych komórek do 1 000 000
+
+Update 16.05.2020 (file picking)
  + filePicking - using windowsAPI
  + dane wybranej komórki - muszą istnieć nazwy (przeykład: w 100.txt nazwami są "a", "b", "c"...)
  + do "state_100x100x100" dodałem rozmiary siatki i teraz się ładuje
  + ograniczenie dla wyświetlanych komórek do 100 000 (tymczasowe)
 
- Update 11.05.2020 (mouse picking - prat II):
+Update 11.05.2020 (mouse picking - prat II):
  + mousePicking (part II)
  + algorytm do uogólniania - pierwszy pomysł (F2 - na własne ryzyko)
  + podstawowe GUI (wczytywanie pliku, pozycja kamery, dane wybranej komórki)
@@ -37,7 +45,6 @@ Update 17.04.2020:
  + wygenerowane przez Michała struktury siatek 10x10x10, 20x20x20, 30x30x30 (folder "sample")
  + dwa przykładowe screeny struktury 10_10_10 (folder "sample")
 
- 
 Q:
  + Czy jest ograniczenie co do liczby różnych ziaren? (ile bajtów potrzebuję na określenie ID ziarna)
     - "docelowo ziaren może być dość dużo"
@@ -49,5 +56,5 @@ Q:
     - "mogą pojawić się inne figury"
  + Jakie opcje chcemy w GUI?
     - "rotacja, zoom oraz zmiana widoków pomiędzy danymi które mieliśmy w pliku."
- + Czy jakieś dane można uznać za wspólne dla wszystkich komórek w danym ziarnie/
+ + Czy jakieś dane można uznać za wspólne dla wszystkich komórek w danym ziarnie?
     - "Tylko kolor będzie wspólny"
