@@ -20,7 +20,7 @@ DataMiner::DataMiner(const char* fileName)
 		meshSize[0] = 0;
 		meshSize[1] = 0;
 		meshSize[2] = 0;
-		return;
+		//return;
 	}
 	std::string tmp;
 	std::vector<std::string> valuesNames;
@@ -38,6 +38,39 @@ DataMiner::DataMiner(const std::string fileName)
 	DataMiner(fileName.c_str())
 {
 }
+
+DataMiner::DataMiner(const std::wstring fileName)
+{
+	//this->fileName = fileName.c_str();
+	this->file.open(fileName);
+	if (file.fail())
+	{
+		throw "failed to open file";
+	}
+	std::string cline;
+	getline(this->file, cline);
+
+	std::istringstream iss(cline);
+	iss >> meshSize[0] >> meshSize[1] >> meshSize[2];
+	if (meshSize[0] <= 0 || meshSize[1] <= 0 || meshSize[2] <= 0)
+	{
+		meshSize[0] = 0;
+		meshSize[1] = 0;
+		meshSize[2] = 0;
+		return;
+	}
+	std::string tmp;
+	std::vector<std::string> valuesNames;
+	while (iss >> tmp) {
+		valuesNames.push_back(tmp);
+	}
+	if (valuesNames.size() > 0)
+	{
+		valuesNames.erase(valuesNames.begin());
+	}
+	CubeCell::setNames(valuesNames);
+}
+
 
 DataMiner::~DataMiner() noexcept
 {
@@ -67,7 +100,7 @@ std::unique_ptr<CubeCell> DataMiner::GetNextCell(Graphics& gfx)
 	int grain = (int)values[0];
 	values.erase(values.begin());
 	initGrain(grain);
-	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(1, meshSize, x, y, z, grain, values, gfx);
+	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(meshSize, x, y, z, grain, values, gfx);
 	return returnVale;
 }
 
@@ -95,7 +128,7 @@ std::unique_ptr<CubeCell> DataMiner::GetCellAt(int index, Graphics& gfx){
 	int grain =(int) values[0];
 	values.erase(values.begin());
 	initGrain(grain);
-	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(index, meshSize, x, y, z, grain, values, gfx);
+	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(meshSize, x, y, z, grain, values, gfx);
 	return returnVale;
 };
 

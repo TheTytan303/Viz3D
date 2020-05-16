@@ -234,6 +234,15 @@ bool Window::SetWindowTitle(const std::string& title) {
 	return true;
 }
 
+bool Window::SetWindowTitleW(const std::wstring& title)
+{
+	if (SetWindowText(hWnd, title.c_str()) == 0) {
+		throw CWND_LAST_EXCEPT();
+		return false;
+	}
+	return true;
+}
+
 Graphics& Window::Gfx()
 {
 	return *pGfx;

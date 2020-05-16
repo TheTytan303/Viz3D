@@ -31,6 +31,7 @@ private:
 	void mineData();
 	void ShowPickedFrame();
 	void makeComboCubes();
+	void openFile();
 	std::shared_ptr<CubeCell> getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight);
 	//void sample(float mouseX, float mouseY, int screenWidth, int screenHeight);
 private:
@@ -38,6 +39,7 @@ private:
 	std::unique_ptr<DataMiner> pMiner;
 	Window wnd;
 	ImguiManager imgui;
-	char filename[1024] = "state_30x30x30.txt";
+	//char filename[1024] = "state_30x30x30.txt";
+	wstring filepath = L"100.txt";
 	std::shared_ptr<CubeCell> picked;
 };

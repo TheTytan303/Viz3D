@@ -46,7 +46,7 @@ public:
 //--------------------=Fields=----------------
 public:
 	short coords[3];			//6B
-	int id;						//4B
+	//int id;						//4B
 	int grain;					//4B
 	short meshCoords[3];			//6B
 	//18b / cell
@@ -54,7 +54,10 @@ public:
 
 //--------------------=Methods=----------------
 public:
-	CubeCell(int id, unsigned short* meshSize, unsigned short x, unsigned short y, unsigned short z, int grain, std::vector<float> values, Graphics& gfx);
+	CubeCell(unsigned short* meshSize,
+		unsigned short x, unsigned short y, unsigned short z,
+		int grain, std::vector<float> values,
+		Graphics& gfx);
 	CubeCell(CubeCell& cell) = default;
 	std::shared_ptr<std::vector<float>> getColor();
 

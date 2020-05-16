@@ -150,7 +150,7 @@ float CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, flo
 	//DirectX::TriangleTests::Intersects();
 	return returnVale;
 }
-CubeCell::CubeCell(int id, 
+CubeCell::CubeCell(
 	unsigned short* meshSize, 
 	unsigned short x, unsigned short y, unsigned short z, 
 	int grain, std::vector<float> values, Graphics& gfx)
@@ -158,7 +158,7 @@ CubeCell::CubeCell(int id,
 	values(values),
 	grain(grain)
 	//color(color),
-	//id(id)
+	//id()
 {
 	if (!isStaticInitialized()) {
 		struct Vertex {
@@ -190,6 +190,15 @@ CubeCell::CubeCell(int id,
 			0,4,2, 2,4,6,	//left
 			0,1,4, 1,5,4,	//bottom
 		};
+		//*/
+		/*
+		const std::vector<unsigned short> indecies =
+		{
+			0, 1, 2, 3, 7,
+			1, 5, 0, 4, 6,
+			2, 7
+		};
+		//*/
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
@@ -200,10 +209,12 @@ CubeCell::CubeCell(int id,
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+			//{"SV_InstanceID",0,DXGI_FORMAT_R32_UINT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
 		};
 		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
 
 		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		//AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP));
 	}
 	else
 	{
@@ -245,7 +256,7 @@ short* CubeCell::getCoords() const
 }
 int CubeCell::getId() const
 {
-	return id;
+	return 1;
 }
 int CubeCell::getGrain() const
 {

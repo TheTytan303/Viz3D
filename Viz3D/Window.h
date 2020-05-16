@@ -52,6 +52,7 @@ public:
 	Window(const Window&) = delete;
 	Window& operator=(const Window&) = delete;
 	bool SetWindowTitle(const std::string& title);
+	bool SetWindowTitleW(const std::wstring& title);
 	Graphics& Gfx();
 private:
 	static LRESULT CALLBACK HandleMsgSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);

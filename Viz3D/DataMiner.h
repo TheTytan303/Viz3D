@@ -28,6 +28,7 @@ public:
 public:
 	DataMiner(const char* fileName);
 	DataMiner(const std::string fileName);
+	DataMiner(const std::wstring fileName);
 	DataMiner(const DataMiner&) = delete;
 	DataMiner() = delete;
 	DataMiner& operator=(const DataMiner&) = delete;

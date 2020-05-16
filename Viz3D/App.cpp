@@ -13,6 +13,7 @@
 #include <ShlObj.h>
 #include <iostream>
 #include <cstdlib>
+#include <stdlib.h>
 #include <ctime>
 #include <vector>
 #include <string>
@@ -27,6 +28,8 @@ App::App()
 int licznik = 0;
 int App::Go()
 {
+
+	//camera.SetCamera(30, 0, 0, 0, 0, 0);
 	MSG msg;
 	BOOL gResult;
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
@@ -74,6 +77,7 @@ int App::Go()
 			}
 			case Mouse::Event::Type::LPress:
 			{
+				frames.clear();
 				if(getPickedItem(e.GetPosX(), e.GetPosY(), 800, 600))
 					ShowPickedFrame();
 				break;
@@ -147,7 +151,7 @@ void App::mineData()
 {
 	try 
 	{
-		pMiner = std::make_unique<DataMiner>(filename);
+		pMiner = std::make_unique<DataMiner>(filepath);
 	}
 	catch (...)
 	{
@@ -157,18 +161,26 @@ void App::mineData()
 	unsigned short* size = pMiner->meshSize;
 	
 	int n = (int)size[0] * (int)size[1]* (int)size[2];
-	wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f,  200.0f));
 	//wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(0, 0, 1.0f, (float(size[2])*2) + 100.0f));
-
-	camera.SetCamera(30,0,0, 0,0,0);
+	wnd.SetWindowTitleW(filepath);
+	if (size[2] != 0 && size[2] >100)
+	{
+		camera.SetCamera(size[2], 0, 0, 0, 0, 0);
+		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, size[2]*2));
+	}
+	else
+	{
+		camera.SetCamera(30, 0, 0, 0, 0, 0);
+		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, 200.0f));
+	}
 	cells.clear();
 	frames.clear();
 	lines.clear();
 	try 
 	{
-		if (n > 200000) 
+		if (n > 100000) 
 		{
-			n = 200000;
+			n = 100000;
 		}
 		if (n != 0) 
 		{
@@ -272,6 +284,14 @@ void App::DoFrame()
 			{
 				ImGui::Text("Grain ID: %d", picked->grain);
 				ImGui::Text("coords: %d x %d x %d", picked->meshCoords[0], picked->meshCoords[1],picked->meshCoords[2]);
+				for(int i=0; i<CubeCell::getNames().size();i++)
+				{
+					std::ostringstream oss;
+					oss << CubeCell::getNames().at(i);
+					oss << ": ";
+					oss << picked->getDetails().at(i);
+					ImGui::Text(oss.str().c_str());
+				}
 			}
 			ImGui::End();
 		}
@@ -306,11 +326,18 @@ void App::DoFrame()
 		ImGui::End();
 		if (ImGui::Begin("Input file name"))
 		{
-			ImGui::Text("file name:");
-			ImGui::InputText("", filename, sizeof(filename));
-			if (ImGui::Button("OK"))
+			//ostringstream oss;
+			//oss << "File :" << filepath.c_str();
+			//ImGui::Text(oss.str().c_str());
+			//ImGui::InputText("", filename, sizeof(filename));
+			//if (ImGui::Button("OK"))
+			//{
+			//	//filepath = filename;
+			//	mineData();
+			//}
+			if (ImGui::Button("pickFile"))
 			{
-				mineData();
+				openFile();
 			}
 		}
 		ImGui::End();
@@ -377,11 +404,11 @@ std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenW
 		DirectX::XMVectorGetX(rayDirection),
 		DirectX::XMVectorGetY(rayDirection),
 		DirectX::XMVectorGetZ(rayDirection), };
-	lines.push_back(std::move
-	(
-		std::make_unique<Line>(v1,v2,1,0,0,wnd.Gfx())
-	)
-	);
+	//lines.push_back(std::move
+	//(
+	//	std::make_unique<Line>(v1,v2,1,0,0,wnd.Gfx())
+	//)
+	//);
 
 	int n = (int)cells.size();
 	float lastOne = 0.0f;
@@ -406,35 +433,9 @@ std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenW
 			}
 		}
 	}
-	//n = (int)comboCubes.size();
-	//for (int i = 0; i < n; i++)
-	//{
-	//	comboCubes.at(i).get()->GetTransformXM();
-	//	if (comboCubes.at(i).get()->ifHit(rayOrigin, rayDirection, 0))
-	//	{
-	//		g++;
-	//		unsigned short* tmp = pMiner->meshSize;
-	//		int x1 = comboCubes.at(i).get()->meshCoords[0];
-	//		int y1 = comboCubes.at(i).get()->meshCoords[1];
-	//		int z1 = comboCubes.at(i).get()->meshCoords[2];
-	//		std::unique_ptr<CubeFrame> ptr = std::make_unique<CubeFrame>
-	//			(tmp, x1, y1, z1,
-	//				0.0f, 0.0f, 0.0f,
-	//				wnd.Gfx());
-	//		frames.push_back(std::move(ptr));
-	//		//return nullptr;
-	//		//DirectX::XMVECTOR tmp = DirectX::XMVector3TransformCoord(origin, inverseviewproj);
-	//		//return cells.at(i);
-	//	}
-	//}
 	if(lastOne != 0.0f)
 		return picked;
 	return nullptr;
-
-	//DirectX::XMVector3Unproject(raydirection,0,0, screenWidth,screenHeight,
-	//	0,1,wnd.Gfx().getProjection(),camera.getMatrix(),);
-	//rayComponentHandle->position = rayorigin;
-	//rayComponentHandle->direction = raydirection;
 }
 void App::ShowPickedFrame()
 {
@@ -447,4 +448,66 @@ void App::ShowPickedFrame()
 			0.0f, 0.0f, 0.0f,
 			wnd.Gfx());
 	frames.push_back(std::move(ptr));
+}
+void App::openFile()
+{
+	IFileDialog* dialog = NULL;
+	HRESULT hr = CoCreateInstance(
+		CLSID_FileOpenDialog,
+		NULL,
+		CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&dialog));
+	if (SUCCEEDED(hr))
+	{
+		// Create an event handling object, and hook it up to the dialog.
+		//IFileDialogEvents* pfde = NULL;
+		//hr = CDialogEventHandler_CreateInstance(IID_PPV_ARGS(&pfde));
+		//if (SUCCEEDED(hr))
+		//{
+		DWORD dwFlags;
+		hr = dialog->GetOptions(&dwFlags);
+		if (SUCCEEDED(hr))
+		{
+			// In this case, get shell items only for file system items.
+			hr = dialog->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
+			if (SUCCEEDED(hr))
+			{
+				// Set the default extension to be ".txt" / ".csv" file.
+				hr = dialog->SetDefaultExtension(L"txt;csv");
+				if (SUCCEEDED(hr))
+				{
+					// Show the dialog
+					hr = dialog->Show(NULL);
+					if (SUCCEEDED(hr))
+					{
+						// Obtain the result once the user clicks 
+						// the 'Open' button.
+						// The result is an IShellItem object.
+						IShellItem* psiResult;
+						hr = dialog->GetResult(&psiResult);
+						if (SUCCEEDED(hr))
+						{
+							PWSTR pszFilePath = NULL;
+							hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH,
+								&pszFilePath);
+							if (SUCCEEDED(hr))
+							{
+								std::wstringstream wss;
+								wss << pszFilePath;
+								filepath = wss.str();
+								mineData();
+								//std::ostringstream oss;
+								//oss << pszFilePath;
+								//filepath = oss.str();
+								//wcstombs(filename, pszFilePath, wcslen(pszFilePath));
+								//strncpy_s(filename, filepath.c_str(), sizeof(filepath.c_str()) - 1);
+							}
+							psiResult->Release();
+						}
+					}
+				}
+			}
+		}
+		dialog->Release();
+	}
 }
