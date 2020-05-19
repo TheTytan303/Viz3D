@@ -7,7 +7,7 @@ TODO:
  - automatyczne nazywanie
  - algorytm do uogólniania
 
- Update 17.05.2020 (Cell refactor)
+ Update 19.05.2020 (Cell refactor)
  + optymalizacja pamięciowa (8kk komórek zajmuje do 1.5GB RAM)
  + brak ograniczenia dla ilości komórek 
 
