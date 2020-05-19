@@ -36,8 +36,8 @@ public:
 	void closeFile() noexcept;
 	//int GetFileHeight() noexcept;
 	//static std::vector<CubeCell> LoadCells(const char* file);
-	std::unique_ptr<CubeCell> GetNextCell(Graphics& gfx);
-	std::unique_ptr<CubeCell> GetCellAt(int index, Graphics& gfx);
+	std::unique_ptr<Cell> GetNextCell();
+	std::unique_ptr<Cell> GetCellAt(int index);
 	unsigned short* GetMeshSize() noexcept;
 	std::vector<std::string> GetValuesNames()noexcept;
 	void initGrain(int id) noexcept;

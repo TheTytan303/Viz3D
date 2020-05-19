@@ -81,7 +81,7 @@ void DataMiner::closeFile() noexcept {
 	this->file.close();
 }
 
-std::unique_ptr<CubeCell> DataMiner::GetNextCell(Graphics& gfx)
+std::unique_ptr<Cell> DataMiner::GetNextCell()
 {
 	unsigned short x, y, z;
 	std::vector<float> values;
@@ -100,11 +100,11 @@ std::unique_ptr<CubeCell> DataMiner::GetNextCell(Graphics& gfx)
 	int grain = (int)values[0];
 	values.erase(values.begin());
 	initGrain(grain);
-	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(meshSize, x, y, z, grain, values, gfx);
+	std::unique_ptr<Cell> returnVale = std::make_unique<Cell>(x, y, z, grain, values);
 	return returnVale;
 }
 
-std::unique_ptr<CubeCell> DataMiner::GetCellAt(int index, Graphics& gfx){
+std::unique_ptr<Cell> DataMiner::GetCellAt(int index){
 	file.seekg(file.beg);
 	std::string cline;
 	for (int i = 0; i < index; i++)
@@ -128,7 +128,7 @@ std::unique_ptr<CubeCell> DataMiner::GetCellAt(int index, Graphics& gfx){
 	int grain =(int) values[0];
 	values.erase(values.begin());
 	initGrain(grain);
-	std::unique_ptr<CubeCell> returnVale = std::make_unique<CubeCell>(meshSize, x, y, z, grain, values, gfx);
+	std::unique_ptr<Cell> returnVale = std::make_unique<Cell>(x, y, z, grain, values);
 	return returnVale;
 };
 

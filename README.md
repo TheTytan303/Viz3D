@@ -1,12 +1,15 @@
 # Viz3D
 TODO:
- - mousePicking (part III)
  - graficzna interpretacja zmiennych
+ - mousePicking (part III)
  - optymalizacja (Instancing)
  - optymalizacja ładowania
- - optymalizacja pamięciowa (żre więcej RAMu niż Chrome, nie uruchamiać siatek większych niż 100x100x100)
+ - automatyczne nazywanie
  - algorytm do uogólniania
 
+ Update 17.05.2020 (Cell refactor)
+ + optymalizacja pamięciowa (8kk komórek zajmuje do 1.5GB RAM)
+ + brak ograniczenia dla ilości komórek 
 
 Update 16.05.2020 (The Grid)
  + prosty (naiwny?) algorytm do wyznaczania komórek na zewnątrz (które wymagają wyświetlania)
@@ -48,7 +51,7 @@ Update 17.04.2020:
 Q:
  + Czy jest ograniczenie co do liczby różnych ziaren? (ile bajtów potrzebuję na określenie ID ziarna)
     - "docelowo ziaren może być dość dużo"
- + Czy możemy uznać że siatka nie będzie miała większych rozmiarów? (ile bajtów potrzebuję na określenie ID ziarna)
+ + Czy możemy uznać że siatka nie będzie miała większych rozmiarów?
     - "Po wczytaniu siatki z pliku w programie nie będziemy już zwiększać liczby komórek"
  + Czy jest ograniczenie co do typu/rozmiaru zmiennych? (tych wartości, których nie wykorzystuję do wizualizacji)
     - "Zmienne zawsze będą typu int (0 - n) albo double (0 - n) można odrysowywać dane zmienne za pocą gradientu kolorów."

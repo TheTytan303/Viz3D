@@ -17,8 +17,15 @@ float CubeFrame::size = 0.5f;
 //--------------------=non-Static=----------------
 std::vector<DirectX::XMVECTOR> CubeFrame::GetTriangles() const noexcept
 {
+	struct Vertex {
+		struct {
+			float x;
+			float y;
+			float z;
+		} pos;
+	};
 	std::vector<DirectX::XMVECTOR> returnVale;
-	std::vector<Cell::Vertex> vertices =
+	std::vector<Vertex> vertices =
 	{
 		{-1.0f,-1.0f,-1.0f},
 		{ 1.0f,-1.0f,-1.0f},
@@ -55,8 +62,6 @@ bool CubeFrame::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, flo
 		DirectX::XMVector3Transform(DirectX::XMVectorSet(1.0f, 1.0f, 1.0f, 0.0f), GetTransformXM())
 	};
 	vertices[0] = vertices[0];
-	//DirectX::XMVectorMul
-
 	const std::vector<unsigned short> indecies =
 	{
 		0,2,1, 2,3,1,	//back
@@ -68,18 +73,6 @@ bool CubeFrame::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, flo
 	};
 	for (int i = 0; i < indecies.size(); i += 3)
 	{
-		//DirectX::XMVECTOR v1 = DirectX::XMVectorSet
-		//(
-		//	vertices.at(),
-		//);
-		//DirectX::XMVECTOR v2 = DirectX::XMVectorSet
-		//(
-		//
-		//);
-		//DirectX::XMVECTOR v2 = DirectX::XMVectorSet
-		//(
-		//
-		//);
 		bool returnVale = DirectX::TriangleTests::Intersects(
 			origin, direction,
 			vertices[indecies[i]],
@@ -90,8 +83,6 @@ bool CubeFrame::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, flo
 		if (returnVale)
 			return true;
 	}
-
-	//DirectX::TriangleTests::Intersects();
 	return false;
 }
 CubeFrame::CubeFrame(

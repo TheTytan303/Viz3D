@@ -36,7 +36,7 @@ private:
 	//void sample(float mouseX, float mouseY, int screenWidth, int screenHeight);
 private:
 	Camera camera;
-	std::unique_ptr<DataMiner> pMiner;
+	std::shared_ptr<DataMiner> pMiner;
 	Window wnd;
 	ImguiManager imgui;
 	//char filename[1024] = "state_30x30x30.txt";

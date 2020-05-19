@@ -145,6 +145,7 @@
     <ClCompile Include="App.cpp" />
     <ClCompile Include="Bindable.cpp" />
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="Cell.cpp" />
     <ClCompile Include="ComboCube.cpp" />
     <ClCompile Include="CubeCell.cpp" />
     <ClCompile Include="CubeFrame.cpp" />

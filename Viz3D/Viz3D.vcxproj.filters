@@ -72,9 +72,6 @@
     <ClCompile Include="CustomException.cpp">
       <Filter>Source Files\WinAPI</Filter>
     </ClCompile>
-    <ClCompile Include="App.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Graphics.cpp">
       <Filter>Source Files\DXAPI</Filter>
     </ClCompile>
@@ -151,6 +148,12 @@
       <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Grid.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
