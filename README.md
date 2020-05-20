@@ -1,14 +1,17 @@
 # Viz3D
 TODO:
- - graficzna interpretacja zmiennych
  - mousePicking (part III)
  - optymalizacja (Instancing)
  - optymalizacja ładowania
  - automatyczne nazywanie
  - algorytm do uogólniania
+ - Kolory i skala do graficznej interpretacji
+
+ Update 20.05.2020 (Variables Vizualization)
+ + graficzna interpretacja zmiennych (i powrót do widoku ziaren)
 
  Update 19.05.2020 (Cell refactor)
- + optymalizacja pamięciowa (8kk komórek zajmuje do 1.5GB RAM)
+ + optymalizacja pamięciowa
  + brak ograniczenia dla ilości komórek 
 
 Update 16.05.2020 (The Grid)

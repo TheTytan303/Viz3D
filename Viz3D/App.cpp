@@ -167,14 +167,16 @@ void App::mineData()
 	if (size[2] != 0 && size[2] >= 100)
 	{
 		camera.SetCamera(size[2] * 2.0f, 0, 0, 0, 0, 0);
-		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, size[2] * 2));
+		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, size[2] * 3.0f));
 	}
 	else
 	{
 		camera.SetCamera(size[2] * 2.0f, 0, 0, 0, 0, 0);
-		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, 200.0f));
+		wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 1.0f, 200.0f+ size[2] * 2.0f));
 	}
-	grid.release();
+	//grid.release();
+	//grid.~unique_ptr();
+	//std::Deleter(grid);
 	grid = std::make_unique<Grid>(pMiner);
 	grid->makeVisableCells(wnd.Gfx());
 }
@@ -297,20 +299,40 @@ void App::DoFrame()
 			ImGui::Text(oss2.str().c_str());
 		}
 		ImGui::End();
-		if (ImGui::Begin("Input file name"))
+		if (ImGui::Begin("Input file"))
 		{
-			//ostringstream oss;
-			//oss << "File :" << filepath.c_str();
-			//ImGui::Text(oss.str().c_str());
-			//ImGui::InputText("", filename, sizeof(filename));
-			//if (ImGui::Button("OK"))
-			//{
-			//	//filepath = filename;
-			//	mineData();
-			//}
 			if (ImGui::Button("pickFile"))
 			{
 				openFile();
+			}
+		}
+		ImGui::End();
+		if (ImGui::Begin("Grid Data:"))
+		{
+			std::ostringstream oss;
+			int count = Cell::getNames().size();
+			if (count != 0)
+			{
+				ImGui::Text("variables range:");
+				for (int i = 0; i < count; i++)
+				{
+					if (ImGui::Button(Cell::getNames().at(i).c_str()))
+					{
+						grid->showVariable(i, wnd.Gfx());
+					}
+					oss << Cell::getNames().at(i) << ": ";
+					oss << grid->getMinis()[i] << " - ";
+					oss << grid->getMaxes()[i] << endl;
+				}
+				ImGui::Text(oss.str().c_str());
+				if (ImGui::Button("Show grains"))
+				{
+					grid->resetColors(wnd.Gfx());
+				}
+			}
+			else
+			{
+				ImGui::Text("no variables specified");
 			}
 		}
 		ImGui::End();

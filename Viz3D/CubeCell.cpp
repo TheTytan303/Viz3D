@@ -61,6 +61,83 @@ std::map<int, std::shared_ptr<std::vector<float>>> CubeCell::colors = {};
 
 
 //--------------------=non-Static=----------------
+
+CubeCell::CubeCell(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx)
+	:
+	Cell(cell)
+{
+	if (!isStaticInitialized()) {
+		struct Vertex {
+			struct {
+				float x;
+				float y;
+				float z;
+			} pos;
+		};
+		std::vector<Vertex> vertices =
+		{
+			{-1.0f,-1.0f,-1.0f},
+			{ 1.0f,-1.0f,-1.0f},
+			{-1.0f, 1.0f,-1.0f},
+			{ 1.0f, 1.0f,-1.0f},
+			{-1.0f,-1.0f, 1.0f},
+			{ 1.0f,-1.0f, 1.0f},
+			{-1.0f, 1.0f, 1.0f},
+			{ 1.0f, 1.0f, 1.0f},
+		};
+		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
+		const std::vector<unsigned short> indecies =
+		{
+			2,3,
+			0,1,
+			5,3,
+			7,2,
+			6,0,
+			4,5,
+			6,7
+		};
+		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
+
+		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+		auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
+		auto pvsbc = pvs->GetBytecode();
+		AddStaticBind(std::move(pvs));
+
+		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
+		{
+			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
+		};
+		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP));
+	}
+	else
+	{
+		SetIndexFromStatic();
+	}
+	initGrain(grainID);
+	const ColorBuffer cb2 = {
+		{
+			{
+			colors.at(grainID)->at(0),
+			colors.at(grainID)->at(1),
+			colors.at(grainID)->at(2),
+			1.0f
+			}
+		}
+	};
+	std::unique_ptr<PixelConstantBuffer<ColorBuffer>> tmp = std::make_unique<PixelConstantBuffer<ColorBuffer>>(gfx, cb2);
+	pColorBuffer = tmp.get();
+	//pColorBuffer = std::make_unique<PixelConstantBuffer<ColorBuffer>>(gfx, cb2);
+	AddBind(move(tmp));
+
+
+	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+
+	this->coords[0] = meshCoords[0] - (meshSize[0] / 2);
+	this->coords[1] = meshCoords[1] - (meshSize[1] / 2);
+	this->coords[2] = meshCoords[2] - (meshSize[2] / 2);
+}
+
 std::shared_ptr<std::vector<float>> CubeCell::getColor()
 {
 	return colors.at(grainID);
@@ -152,175 +229,34 @@ float CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, flo
 	//DirectX::TriangleTests::Intersects();
 	return returnVale;
 }
-CubeCell::CubeCell(
-	unsigned short* meshSize, 
-	unsigned short x, unsigned short y, unsigned short z, 
-	int grain, std::vector<float> values, Graphics& gfx)
-	:
-	Cell(x, y, z, grain, values)
+
+void CubeCell::setColor(std::vector<float> color, Graphics& gfx)
 {
-	if (!isStaticInitialized()) {
-		struct Vertex {
-			struct {
-				float x;
-				float y;
-				float z;
-			} pos;
-		};
-		std::vector<Vertex> vertices =
+	const ColorBuffer cb = {
 		{
-			{-1.0f,-1.0f,-1.0f},
-			{ 1.0f,-1.0f,-1.0f},
-			{-1.0f, 1.0f,-1.0f},
-			{ 1.0f, 1.0f,-1.0f},
-			{-1.0f,-1.0f, 1.0f},
-			{ 1.0f,-1.0f, 1.0f},
-			{-1.0f, 1.0f, 1.0f},
-			{ 1.0f, 1.0f, 1.0f},
-		};
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
-		/*
-		const std::vector<unsigned short> indecies =
-		{
-			0,2,1, 2,3,1,	//back
-			1,3,5, 3,7,5,	//right
-			2,6,3, 3,6,7,	//top
-			4,5,7, 4,7,6,	//front
-			0,4,2, 2,4,6,	//left
-			0,1,4, 1,5,4,	//bottom
-		};
-		//*/
-		const std::vector<unsigned short> indecies =
-		{
-			2,3,
-			0,1,
-			5,3,
-			7,2,
-			6,0,
-			4,5,
-			6,7
-		};
-		//*/
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
-
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
-		auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
-		auto pvsbc = pvs->GetBytecode();
-		AddStaticBind(std::move(pvs));
-
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
-		{
-			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-			//{"SV_InstanceID",0,DXGI_FORMAT_R32_UINT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-		};
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-
-		//AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP));
-	}
-	else
-	{
-		SetIndexFromStatic();
-	}
-	struct ConstantBuffer2
-	{
-		struct
-		{
-			float r;
-			float g;
-			float b;
-			float a;
-		}face_colors[1];
-	};
-	initGrain(grain);
-	const ConstantBuffer2 cb2 =	{
-		{
-			{colors.at(grain)->at(0), colors.at(grain)->at(1), colors.at(grain)->at(2), 1.0f}
+			{
+			color.at(0),
+			color.at(1),
+			color.at(2),
+			1.0f
+			}
 		}
 	};
-	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
-
-	this->coords[0] = x - (meshSize[0] / 2);
-	this->coords[1] = y - (meshSize[1] / 2);
-	this->coords[2] = z - (meshSize[1] / 2);
-
+	pColorBuffer->update(gfx, cb);
 }
-
-CubeCell::CubeCell(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx)
-	:
-	Cell(cell)
+void CubeCell::resetColor(Graphics& gfx)
 {
-	if (!isStaticInitialized()) {
-		struct Vertex {
-			struct {
-				float x;
-				float y;
-				float z;
-			} pos;
-		};
-		std::vector<Vertex> vertices =
+	const ColorBuffer cb2 = {
 		{
-			{-1.0f,-1.0f,-1.0f},
-			{ 1.0f,-1.0f,-1.0f},
-			{-1.0f, 1.0f,-1.0f},
-			{ 1.0f, 1.0f,-1.0f},
-			{-1.0f,-1.0f, 1.0f},
-			{ 1.0f,-1.0f, 1.0f},
-			{-1.0f, 1.0f, 1.0f},
-			{ 1.0f, 1.0f, 1.0f},
-		};
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
-		const std::vector<unsigned short> indecies =
-		{
-			2,3,
-			0,1,
-			5,3,
-			7,2,
-			6,0,
-			4,5,
-			6,7
-		};
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
-
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
-		auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
-		auto pvsbc = pvs->GetBytecode();
-		AddStaticBind(std::move(pvs));
-
-		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
-		{
-			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
-		};
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP));
-	}
-	else
-	{
-		SetIndexFromStatic();
-	}
-	initGrain(grainID);
-	struct ConstantBuffer2
-	{
-		struct
-		{
-			float r;
-			float g;
-			float b;
-			float a;
-		}face_colors[1];
-	};
-	const ConstantBuffer2 cb2 = {
-		{
-			{colors.at(grainID)->at(0), colors.at(grainID)->at(1), colors.at(grainID)->at(2), 1.0f}
+			{
+			colors.at(grainID)->at(0),
+			colors.at(grainID)->at(1),
+			colors.at(grainID)->at(2),
+			1.0f
+			}
 		}
 	};
-	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
-
-	this->coords[0] = meshCoords[0] - (meshSize[0] / 2);
-	this->coords[1] = meshCoords[1] - (meshSize[1] / 2);
-	this->coords[2] = meshCoords[2] - (meshSize[1] / 2);
+	pColorBuffer->update(gfx, cb2);
 }
 
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "ConstantBuffer.h"
 #include "Cell.h"
 #include "Graphics.h"
 #include "DrawableBase.h"
@@ -8,6 +9,19 @@
 #include <ctime>
 #include <string>
 #include <map>
+
+
+struct ColorBuffer
+{
+	struct
+	{
+		float r;
+		float g;
+		float b;
+		float a;
+	}face_colors[1];
+};
+
 
 class CubeCell : public Cell, public DrawableBase<CubeCell>
 {
@@ -23,30 +37,21 @@ public:
 //--------------------=Fields=----------------
 private:
 	short coords[3];
+	ConstantBuffer<ColorBuffer>* pColorBuffer;
 
 //--------------------=Methods=----------------
 public:
-	CubeCell(unsigned short* meshSize,
-		unsigned short x, unsigned short y, unsigned short z,
-		int grain, std::vector<float> values,
-		Graphics& gfx);
 	CubeCell(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx);
 
-
 	CubeCell(CubeCell& cell) = default;
+
 	std::shared_ptr<std::vector<float>> getColor();
-
-	//std::vector<DirectX::XMVECTOR> GetTriangles() const noexcept;
 	float ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept;
-
+	void setColor(std::vector<float> color, Graphics& gfx);
+	void resetColor(Graphics& gfx);
 	short* getCoords() const;
-
-
-	// Inherited via Cell:
-	//unsigned short* getMeshCoords() const;
-	//int getGrain() const override;
-	//std::vector<float> getDetails() const override;
 
 	//Inharited via Drawable
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
+
 };

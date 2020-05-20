@@ -20,10 +20,54 @@ Grid::Grid(std::shared_ptr<DataMiner> pDataMiner)
 	size[2] = pDataMiner->GetMeshSize()[2];
 	const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
 	this->cells = new shared_ptr<CellView>[count];
-	for (int i = 0; i < count; i++)
+	int values = Cell::getNames().size();
+	minis = new float[values];
+	maxes = new float[values];
+	shared_ptr <Cell> tmp = pDataMiner->GetNextCell();
+	for (int i = 0; i < values; i++)
 	{
-		setCell( pDataMiner->GetNextCell() );
+		minis[i] = tmp->getDetails().at(i);
+		maxes[i] = tmp->getDetails().at(i);
 	}
+	setCell(tmp);
+	for (int i = 1; i < count; i++)
+	{
+		tmp = pDataMiner->GetNextCell();
+
+		for (int i = 0; i < values; i++)
+		{
+			if (tmp->getDetails().at(i) > maxes[i])
+			{
+				maxes[i] = tmp->getDetails().at(i);
+			}
+			else if (tmp->getDetails().at(i) < minis[i])
+			{
+				minis[i] = tmp->getDetails().at(i);
+			}
+		}
+		setCell(tmp);
+	}
+	
+	/*else
+	{
+		size[0] = pDataMiner->GetMeshSize()[0];
+		size[1] = pDataMiner->GetMeshSize()[1];
+		size[2] = pDataMiner->GetMeshSize()[2];
+		const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+		this->cells = new shared_ptr<CellView>[count];
+		for (int i = 0; i < count; i++)
+		{
+			setCell(pDataMiner->GetNextCell());
+		}
+	}
+	//*/
+}
+
+Grid::~Grid()
+{
+	delete[] cells;
+	delete[] minis;
+	delete[] maxes;
 }
 
 shared_ptr<Cell> Grid::getCell(unsigned short x, unsigned short y, unsigned short z)
@@ -158,11 +202,11 @@ void Grid::Draw(Graphics& Gfx)
 		cell->Draw(Gfx);
 	}
 }
+
 vector<shared_ptr<CubeCell>> Grid::getVisableCells()
 {
 	return visibles;
 }
-
 vector<shared_ptr<CubeCell>> Grid::makeVisableCells(Graphics& gfx)
 {
 	if (this == nullptr)
@@ -186,4 +230,50 @@ vector<shared_ptr<CubeCell>> Grid::makeVisableCells(Graphics& gfx)
 		}
 	}
 	return visibles;
+}
+
+float* Grid::getMinis()
+{
+	float* returnVale = new float[sizeof(minis)];
+	for (int i = 0; i < sizeof(minis); i++) 
+	{
+		returnVale[i] = minis[i];
+	}
+	return returnVale;
+}
+float* Grid::getMaxes()
+{
+	float* returnVale = new float[sizeof(maxes)];
+	for (int i = 0; i < sizeof(maxes); i++)
+	{
+		returnVale[i] = maxes[i];
+	}
+	return returnVale;
+}
+
+void Grid::showVariable(int valueNo, Graphics& gfx)
+{
+	for (auto cc : visibles)
+	{
+		vector<float> returned = getColor(maxes[valueNo], minis[valueNo], cc->getDetails().at(valueNo));
+		cc->setColor(returned, gfx);
+	}
+}
+void Grid::resetColors(Graphics& gfx)
+{
+	for (auto cc : visibles)
+	{
+		cc->resetColor(gfx);
+	}
+}
+
+vector<float> Grid::getColor(float max, float min, float val) {
+	val = val - min;
+	max = max - min;
+	if (max == 0)
+		max = 1;
+	float hue = val / max;
+	//hue *= 120;
+	vector<float> color = { hue, 1.0f-hue, 0.0f };
+	return color;
 }

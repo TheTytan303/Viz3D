@@ -20,6 +20,8 @@ class Grid
 private:
 	shared_ptr<CellView>* cells;	//invisibles
 	vector<shared_ptr<CubeCell>> visibles;	//<----
+	float* minis;
+	float* maxes;
 	unsigned short size[3];	// x,y,z
 public:
 	//---------------Constructors---------------
@@ -27,9 +29,10 @@ public:
 	Grid(unsigned short* size, vector<shared_ptr<CubeCell>> cells);
 	Grid(std::shared_ptr<DataMiner> pDataMiner);
 
+	~Grid();
 
 
-
+	//---------------Methods---------------
 	unsigned short* getSize()
 	{
 		return size;
@@ -43,4 +46,11 @@ public:
 	vector<shared_ptr<CubeCell>> getVisableCells();
 	vector<shared_ptr<CubeCell>> makeVisableCells(Graphics& gfx);
 
+	float* getMinis();
+	float* getMaxes();
+
+	void showVariable(int valueNo, Graphics& gfx);
+	void resetColors(Graphics& gfx);
+private:
+	vector<float> getColor(float max, float min, float val);
 };
