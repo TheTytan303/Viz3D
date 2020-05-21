@@ -156,6 +156,9 @@
     <ClCompile Include="Cell.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Star.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomException.h">
@@ -267,6 +270,9 @@
       <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Grid.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Star.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
   </ItemGroup>

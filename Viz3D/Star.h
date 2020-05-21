@@ -1,14 +1,7 @@
 #pragma once
-#include "Graphics.h"
 #include "DrawableBase.h"
-#include <vector>
-#include <memory>
-#include <cstdlib>
-#include <ctime>
-#include <string>
-#include <map>
 
-class Line : public DrawableBase<Line>
+class Star : public DrawableBase<Star>
 {
 	//--------------------=Fields=----------------
 private:
@@ -17,11 +10,11 @@ private:
 
 	//--------------------=Methods=----------------
 public:
-	Line(
-		std::vector<float> x, std::vector<float> y,
+	Star(
+		std::vector<float> coords,
 		float red, float blue, float green,
 		Graphics& gfx);
-	Line(Line& cell) = default;
+	Star(Star& cell) = default;
 
 
 	// Inherited via Cell

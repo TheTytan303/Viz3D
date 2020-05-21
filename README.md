@@ -1,11 +1,14 @@
 # Viz3D
 TODO:
- - mousePicking (part III)
+ - slices
  - optymalizacja (Instancing)
  - optymalizacja ładowania
  - automatyczne nazywanie
  - algorytm do uogólniania
- - Kolory i skala do graficznej interpretacji
+ - Kolory i skala(legenda) do graficznej interpretacji
+
+ Update 21.05.2020 (mousePicking (part III))
+ + mousePicking - można wybierać dowolną komórkę
 
  Update 20.05.2020 (Variables Vizualization)
  + graficzna interpretacja zmiennych (i powrót do widoku ziaren)
