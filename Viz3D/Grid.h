@@ -2,6 +2,7 @@
 #include "CubeCell.h"
 #include "Graphics.h"
 #include "DataMiner.h"
+#include "Surface.h"
 
 #include <memory>
 #include <DirectXMath.h>
@@ -12,21 +13,29 @@ struct CellView
 	shared_ptr<Cell> cell;
 	short neighbours;
 };
+struct Slices
+{
+	shared_ptr<Surface> s;
+	bool flag;
+};
+
 
 
 class Grid
 {
 
 private:
-	shared_ptr<CellView>* cells;	//invisibles
-	vector<shared_ptr<CubeCell>> visibles;	//<----
+	shared_ptr<CellView>* cells;	
+	vector<shared_ptr<CubeCell>> visibles;	
+	vector<Slices> slices;	
 	float* minis;
 	float* maxes;
 	unsigned short size[3];	// x,y,z
+	//unsigned short bounds[6]; // mesh: x,x,y,y,z,z
+	//vector<> surfaces;
 public:
 	//---------------Constructors---------------
 
-	Grid(unsigned short* size, vector<shared_ptr<CubeCell>> cells);
 	Grid(std::shared_ptr<DataMiner> pDataMiner);
 
 	~Grid();
@@ -46,6 +55,9 @@ public:
 	vector<shared_ptr<CubeCell>> getVisableCells();
 	vector<shared_ptr<CubeCell>> makeVisableCells(Graphics& gfx);
 
+	void Slice(shared_ptr<Surface> s, bool side);
+	void deSlice();
+
 	float* getMinis();
 	float* getMaxes();
 
@@ -53,4 +65,5 @@ public:
 	void resetColors(Graphics& gfx);
 private:
 	vector<float> getColor(float max, float min, float val);
+	bool outOfBounds(shared_ptr<Cell> c) const;
 };

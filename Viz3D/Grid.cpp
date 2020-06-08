@@ -1,18 +1,4 @@
 #include "Grid.h"
-
-Grid::Grid(unsigned short* size, vector<shared_ptr<CubeCell>> cells)
-{
-	this->size[0] = size[0];
-	this->size[1] = size[1];
-	this->size[2] = size[2];
-	const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-	this->cells = new shared_ptr<CellView>[count];
-	for (int i = 0; i < cells.size(); i++)
-	{
-		setCell(cells[i]);
-	}
-}
-
 Grid::Grid(std::shared_ptr<DataMiner> pDataMiner)
 {
 	size[0] = pDataMiner->GetMeshSize()[0];
@@ -20,7 +6,7 @@ Grid::Grid(std::shared_ptr<DataMiner> pDataMiner)
 	size[2] = pDataMiner->GetMeshSize()[2];
 	const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
 	this->cells = new shared_ptr<CellView>[count];
-	int values = Cell::getNames().size();
+	int values = (int)Cell::getNames().size();
 	minis = new float[values];
 	maxes = new float[values];
 	shared_ptr <Cell> tmp = pDataMiner->GetNextCell();
@@ -33,7 +19,6 @@ Grid::Grid(std::shared_ptr<DataMiner> pDataMiner)
 	for (int i = 1; i < count; i++)
 	{
 		tmp = pDataMiner->GetNextCell();
-
 		for (int i = 0; i < values; i++)
 		{
 			if (tmp->getDetails().at(i) > maxes[i])
@@ -47,20 +32,6 @@ Grid::Grid(std::shared_ptr<DataMiner> pDataMiner)
 		}
 		setCell(tmp);
 	}
-	
-	/*else
-	{
-		size[0] = pDataMiner->GetMeshSize()[0];
-		size[1] = pDataMiner->GetMeshSize()[1];
-		size[2] = pDataMiner->GetMeshSize()[2];
-		const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-		this->cells = new shared_ptr<CellView>[count];
-		for (int i = 0; i < count; i++)
-		{
-			setCell(pDataMiner->GetNextCell());
-		}
-	}
-	//*/
 }
 
 Grid::~Grid()
@@ -134,7 +105,7 @@ void Grid::setCell(shared_ptr<Cell> cell)
 	int z = cell.get()->getMeshCoords()[2];
 	shared_ptr<CellView> target = make_shared<CellView>();
 	target->cell = cell;
-	target->neighbours = 126u; // 6 œcian = 2^6 = 64
+	target->neighbours = 126u;
 	
 	//Left Right Bottom Top Front Back
 	//LRTBFB
@@ -211,25 +182,83 @@ vector<shared_ptr<CubeCell>> Grid::makeVisableCells(Graphics& gfx)
 {
 	if (this == nullptr)
 		return vector<shared_ptr<CubeCell>>();
+
+	visibles.clear();
 	int count = ((int)size[0] * (int)size[1] * (int)size[2]);
 	for (int i = 0; i < count; i++)
 	{
 		if (cells[i] != nullptr)
 		{
+			if (outOfBounds(cells[i]->cell))
+			{
+				continue;
+			}
 			if (cells[i]->neighbours != 0)
 			{
 				visibles.push_back( std::make_shared<CubeCell>(size, cells[i]->cell, gfx) );
-				//visibles.push_back( std::make_shared<CubeCell>(size,
-				//	cells[i]->cell->getMeshCoords()[0],
-				//	cells[i]->cell->getMeshCoords()[1],
-				//	cells[i]->cell->getMeshCoords()[2],
-				//	cells[i]->cell->getGrain(),
-				//	cells[i]->cell->getDetails(),
-				//	gfx) );
 			}
 		}
 	}
 	return visibles;
+}
+
+void Grid::Slice(shared_ptr<Surface> s, bool side)
+{
+	slices.push_back(
+		{
+			s,
+			side
+		}
+	);
+	int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+	for (int i = 0; i < count; i++)
+	{
+		if (cells[i] == nullptr)
+		{
+			continue;
+		}
+		float tmp = s->onSurface(
+			{
+				(float)cells[i]->cell->getMeshCoords()[0],
+				(float)cells[i]->cell->getMeshCoords()[1],
+				(float)cells[i]->cell->getMeshCoords()[2],
+			}
+		);
+		if (!side) tmp *= -1;
+		if (tmp < 2) 
+		{
+			cells[i]->neighbours += 128;
+		}
+	}
+}
+
+void Grid::deSlice()
+{
+	if (slices.size() == 0)
+	{
+		return;
+	}
+	int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+	for (int i = 0; i < count; i++)
+	{
+		if (cells[i] == nullptr)
+		{
+			continue;
+		}
+		float tmp = slices.at(slices.size() - 1).s->onSurface(
+			{
+				(float)cells[i]->cell->getMeshCoords()[0],
+				(float)cells[i]->cell->getMeshCoords()[1],
+				(float)cells[i]->cell->getMeshCoords()[2],
+			}
+		);
+		if (!slices.at(slices.size() - 1).flag) tmp *= -1;
+		if (tmp < 2)
+		{
+			cells[i]->neighbours -= 128;
+		}
+	}
+	slices.erase(slices.end()-1);
 }
 
 float* Grid::getMinis()
@@ -276,4 +305,21 @@ vector<float> Grid::getColor(float max, float min, float val) {
 	//hue *= 120;
 	vector<float> color = { hue, 1.0f-hue, 0.0f };
 	return color;
+}
+
+bool Grid::outOfBounds(shared_ptr<Cell> c) const
+{
+	for (auto& slice : slices)
+	{
+		float f = slice.s->onSurface({
+			(float)c->getMeshCoords()[0],
+			(float)c->getMeshCoords()[1],
+			(float)c->getMeshCoords()[2],
+			});
+		if (slice.flag == true && f < 0 )
+		{
+			return true;
+		}
+	}
+	return false;
 }

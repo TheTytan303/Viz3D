@@ -1,11 +1,19 @@
 # Viz3D
 TODO:
- - slices
+ - slice - part II
+ - HexCell
+ - obsługa dużych plików
  - optymalizacja (Instancing)
  - optymalizacja ładowania
  - automatyczne nazywanie
  - algorytm do uogólniania
  - Kolory i skala(legenda) do graficznej interpretacji
+
+ Update 27.05.2020 (Silce - prat I)
+ + bugfixes
+ +możliwość zrobienia slice'ów:
+ zaznacz 3 komórki przytrzymując 'shift' aby utworzyć płaszczyznę cięcia
+ PPM aby cofnąć cięcie, kolejność zaznaczania komórek ma znaczenie
 
  Update 21.05.2020 (mousePicking (part III))
  + mousePicking - można wybierać dowolną komórkę

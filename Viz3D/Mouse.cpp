@@ -63,7 +63,7 @@ void Mouse::OnLeftRelease(int x, int y) noexcept{
 };
 void Mouse::OnRightPressed(int x, int y) noexcept{
 	rightIsPressed = true;
-	buffer.push(Mouse::Event(Mouse::Event::Type::WheelPress, *this));
+	buffer.push(Mouse::Event(Mouse::Event::Type::RPress, *this));
 	TrimBuffer();
 };
 void Mouse::OnRightRelease(int x, int y) noexcept {

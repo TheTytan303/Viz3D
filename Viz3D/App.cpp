@@ -22,14 +22,22 @@ App::App()
 	:
 	wnd(800, 600, L"App window")
 {
-	//wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 200.0f));
+
+	wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 200.0f));
+	camera.SetCamera(30, 0, 0, 0, 0, 0);
 
 }
 int licznik = 0;
 int App::Go()
 {
 
-	//camera.SetCamera(30, 0, 0, 0, 0, 0);
+	std::wstringstream wss;
+	wss << "C:\\Users\\wcies\\source\\repos\\Viz3D\\samples\\state_10x10x10.txt";
+	filepath = wss.str();
+	mineData();
+
+	std::vector<float> v1 = {0,0,0};
+	stars.push_back(std::make_unique<Star>(v1, 1, 1, 0, wnd.Gfx()));
 	MSG msg;
 	BOOL gResult;
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
@@ -69,24 +77,41 @@ int App::Go()
 			switch (e.GetType()) {
 			case Mouse::Event::Type::Leave:
 			{
-				std::ostringstream oss;
-				oss << "Gone: (" << e.GetPosX() << "," << e.GetPosY() << ")";
-				wnd.SetWindowTitle(oss.str());
-				frames.clear();
+				//std::ostringstream oss;
+				//oss << "Gone: (" << e.GetPosX() << "," << e.GetPosY() << ")";
+				//wnd.SetWindowTitle(oss.str());
+				//frames.clear();
 				break;
 			}
 			case Mouse::Event::Type::LPress:
 			{
 				frames.clear();
+				if (!wnd.kbd.KeyIsPressed(VK_SHIFT))
+				{
+					pickedCells.clear();
+				}
 				picked = getPickedItem(e.GetPosX(), e.GetPosY(), 800, 600);
 				if( picked != nullptr)
 				{
-					ShowPickedFrame();
+					pickedCells.push_back(picked);
+				}
+				ShowPickedFrame();
+				if (pickedCells.size() > 2)
+				{
+					surfaces.clear();
+					shared_ptr<Surface> pSurface = buildSurface(
+						pickedCells[0], pickedCells[1], pickedCells[2]
+						);
+					//surfaces.push_back(pSurface);
+					grid->Slice(pSurface, true);
+					grid->makeVisableCells(wnd.Gfx());
 				}
 				break;
 			}
 			case Mouse::Event::Type::RPress:
 			{
+				grid->deSlice();
+				grid->makeVisableCells(wnd.Gfx());
 				frames.clear();
 				lines.clear();
 				break;
@@ -152,6 +177,9 @@ int App::Go()
 
 void App::mineData() 
 {
+	picked = nullptr;
+	pickedCells.clear();
+	surfaces.clear();
 	try 
 	{
 		pMiner = std::make_unique<DataMiner>(filepath);
@@ -244,6 +272,9 @@ void App::DoFrame()
 		l->Draw(wnd.Gfx());
 	}
 	for (auto& s : stars) {
+		s->Draw(wnd.Gfx());
+	}
+	for (auto& s : surfaces) {
 		s->Draw(wnd.Gfx());
 	}
 	if (grid != nullptr)
@@ -351,15 +382,17 @@ void App::DoFrame()
 void App::ShowPickedFrame()
 {
 	unsigned short* tmp = pMiner->meshSize;
-	
-	int x1 = picked.get()->getMeshCoords()[0];
-	int y1 = picked.get()->getMeshCoords()[1];
-	int z1 = picked.get()->getMeshCoords()[2];
-	std::unique_ptr<CubeFrame> ptr = std::make_unique<CubeFrame>
-		(tmp, x1, y1, z1,
-			0.0f, 0.0f, 0.0f,
-			wnd.Gfx());
-	frames.push_back(std::move(ptr));
+	for (int i = 0; i < pickedCells.size(); i++)
+	{
+		int x1 = pickedCells[i].get()->getMeshCoords()[0];
+		int y1 = pickedCells[i].get()->getMeshCoords()[1];
+		int z1 = pickedCells[i].get()->getMeshCoords()[2];
+		std::unique_ptr<CubeFrame> ptr = std::make_unique<CubeFrame>
+			(tmp, x1, y1, z1,
+				0.0f, 0.0f, 0.0f,
+				wnd.Gfx());
+		frames.push_back(std::move(ptr));
+	}
 }
 void App::openFile()
 {
@@ -422,6 +455,20 @@ void App::openFile()
 		}
 		dialog->Release();
 	}
+}
+
+shared_ptr<Surface> App::buildSurface(std::shared_ptr<CubeCell> c1, std::shared_ptr<CubeCell> c2, std::shared_ptr<CubeCell> c3)
+{ 
+	float size = 1.0f;
+	vector<Surface::Point> points
+	{
+		{(float)c1->getMeshCoords()[0] * size,(float)c1->getMeshCoords()[1] * size,(float)c1->getMeshCoords()[2] * size},
+		{(float)c2->getMeshCoords()[0] * size,(float)c2->getMeshCoords()[1] * size,(float)c2->getMeshCoords()[2] * size},
+		{(float)c3->getMeshCoords()[0] * size,(float)c3->getMeshCoords()[1] * size,(float)c3->getMeshCoords()[2]*size},
+	};
+	return make_shared<Surface>(points,
+		0.0f,1.0f,0.0f,0.5f,
+		wnd.Gfx());
 }
 
 std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight)
