@@ -4,6 +4,9 @@
 #include "DataMiner.h"
 #include "Surface.h"
 
+//tmp
+#include "CubeFrame.h";
+
 #include <memory>
 #include <DirectXMath.h>
 

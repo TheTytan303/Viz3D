@@ -182,7 +182,6 @@ vector<shared_ptr<CubeCell>> Grid::makeVisableCells(Graphics& gfx)
 {
 	if (this == nullptr)
 		return vector<shared_ptr<CubeCell>>();
-
 	visibles.clear();
 	int count = ((int)size[0] * (int)size[1] * (int)size[2]);
 	for (int i = 0; i < count; i++)
@@ -224,14 +223,12 @@ void Grid::Slice(shared_ptr<Surface> s, bool side)
 				(float)cells[i]->cell->getMeshCoords()[2],
 			}
 		);
-		if (!side) tmp *= -1;
-		if (tmp < 2) 
+		if (tmp < 1.0f && tmp > -1)
 		{
 			cells[i]->neighbours += 128;
 		}
 	}
 }
-
 void Grid::deSlice()
 {
 	if (slices.size() == 0)
@@ -252,8 +249,7 @@ void Grid::deSlice()
 				(float)cells[i]->cell->getMeshCoords()[2],
 			}
 		);
-		if (!slices.at(slices.size() - 1).flag) tmp *= -1;
-		if (tmp < 2)
+		if (tmp < 1.0f && tmp > -1)
 		{
 			cells[i]->neighbours -= 128;
 		}
@@ -317,6 +313,10 @@ bool Grid::outOfBounds(shared_ptr<Cell> c) const
 			(float)c->getMeshCoords()[2],
 			});
 		if (slice.flag == true && f < 0 )
+		{
+			return true;
+		}
+		if (slice.flag == false && f > 0)
 		{
 			return true;
 		}

@@ -1,13 +1,16 @@
 # Viz3D
 TODO:
- - slice - part II
- - HexCell
+ - HexCell*
  - obsługa dużych plików
  - optymalizacja (Instancing)
  - optymalizacja ładowania
  - automatyczne nazywanie
  - algorytm do uogólniania
  - Kolory i skala(legenda) do graficznej interpretacji
+ - wyszczególnianie ziarna
+
+ Update 15.06.2020
+ + slice part 2
 
  Update 27.05.2020 (Silce - prat I)
  + bugfixes

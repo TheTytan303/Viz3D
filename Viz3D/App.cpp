@@ -98,11 +98,11 @@ int App::Go()
 				ShowPickedFrame();
 				if (pickedCells.size() > 2)
 				{
+					int last = pickedCells.size();
 					surfaces.clear();
 					shared_ptr<Surface> pSurface = buildSurface(
-						pickedCells[0], pickedCells[1], pickedCells[2]
+						pickedCells[last - 3], pickedCells[last - 2], pickedCells[last - 1]
 						);
-					//surfaces.push_back(pSurface);
 					grid->Slice(pSurface, true);
 					grid->makeVisableCells(wnd.Gfx());
 				}
@@ -394,6 +394,22 @@ void App::ShowPickedFrame()
 		frames.push_back(std::move(ptr));
 	}
 }
+void App::showFramesOf(vector<std::shared_ptr<Cell>> cells)
+{
+	unsigned short* tmp = pMiner->meshSize;
+	for (int i = 0; i < cells.size(); i++)
+	{
+		int x1 = cells[i].get()->getMeshCoords()[0];
+		int y1 = cells[i].get()->getMeshCoords()[1];
+		int z1 = cells[i].get()->getMeshCoords()[2];
+		std::unique_ptr<CubeFrame> ptr = std::make_unique<CubeFrame>
+			(tmp, x1, y1, z1,
+				0.0f, 0.0f, 0.0f,
+				wnd.Gfx());
+		frames.push_back(std::move(ptr));
+	}
+
+}
 void App::openFile()
 {
 	IFileDialog* dialog = NULL;
@@ -531,78 +547,11 @@ std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenW
 		DirectX::XMVectorGetX(rayDest),
 		DirectX::XMVectorGetY(rayDest),
 		DirectX::XMVectorGetZ(rayDest), };
-	//stars.push_back(std::make_unique<Star>(v1, 1, 0, 0, wnd.Gfx()));
-	//stars.push_back(std::make_unique<Star>(v2, 1, 0, 0, wnd.Gfx()));
-	//lines.push_back(std::move(std::make_unique<Line>(v1, v2, 0, 1, 0, wnd.Gfx())));
 	DirectX::XMVECTOR rayDirection = rayDest - rayOrigin;
 	rayDirection = DirectX::XMVector3Normalize(rayDirection);
 	v2 = {
 		DirectX::XMVectorGetX(rayDirection),
 		DirectX::XMVectorGetY(rayDirection),
 		DirectX::XMVectorGetZ(rayDirection), };
-	//stars.push_back(std::make_unique<Star>(v2, 1, 0, 0, wnd.Gfx()));
-	//lines.push_back(std::move(std::make_unique<Line>(v1, v2, 1, 0, 0, wnd.Gfx())));
 	return grid->ifHit(rayOrigin, rayDirection);
 }
-
-/*
-std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight)
-{
-	float m_screenWidth = (float)screenWidth;
-	float m_screenHeight = (float)screenHeight;
-
-	// Normalized device coordinates
-	float x = (2.0f * (float)mouseX) / m_screenWidth - 1.0f;
-	float y = (-2.0f * (float)mouseY) / m_screenHeight + 1.0f;
-
-
-	//XMVECTOR rayOrigin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
-	//XMVECTOR rayDir = XMVectorSet(x, y, 1.0f, 0.0f);
-
-	DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixTranspose(camera.getMatrix());
-	DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixTranspose(wnd.Gfx().getProjection());
-	DirectX::XMMATRIX inverseviewproj = DirectX::XMMatrixInverse(nullptr, viewMatrix * projectionMatrix);
-
-
-	/*
-	DirectX::XMVECTOR origin = DirectX::XMVectorSet(x, y, 0, 0);
-	DirectX::XMVECTOR farPoint = DirectX::XMVectorSet(x, y, 1, 0);
-
-	DirectX::XMVECTOR rayorigin = DirectX::XMVector3TransformCoord(origin, inverseviewproj);
-	DirectX::XMVECTOR rayend = DirectX::XMVector3TransformCoord(farPoint, inverseviewproj);
-	DirectX::XMVECTOR raydirection = DirectX::XMVectorSet(
-		DirectX::XMVectorGetX(rayend) - DirectX::XMVectorGetX(rayorigin),
-		DirectX::XMVectorGetY(rayend) - DirectX::XMVectorGetY(rayorigin),
-		DirectX::XMVectorGetZ(rayend) - DirectX::XMVectorGetZ(rayorigin),
-		DirectX::XMVectorGetW(rayend) - DirectX::XMVectorGetW(rayorigin)
-	);
-	raydirection = DirectX::XMVector3Normalize(raydirection);
-	//*//*
-	DirectX::XMVECTOR rayOrigin = DirectX::XMVectorSet(
-		DirectX::XMVectorGetX(camera.getPosition()) ,
-		DirectX::XMVectorGetY(camera.getPosition()) ,
-		DirectX::XMVectorGetZ(camera.getPosition()) ,
-		DirectX::XMVectorGetW(camera.getPosition())
-	);
-	DirectX::XMVECTOR rayDirection = DirectX::XMVectorSet(
-		DirectX::XMVectorGetX(camera.getDirection()) ,
-		DirectX::XMVectorGetY(camera.getDirection()) ,
-		DirectX::XMVectorGetZ(camera.getDirection()) ,
-		DirectX::XMVectorGetW(camera.getDirection())
-	);
-
-	rayDirection = DirectX::XMVector3Normalize(rayDirection);
-
-	std::vector<float> v1 = {
-		DirectX::XMVectorGetX(rayOrigin),
-		DirectX::XMVectorGetY(rayOrigin),
-		DirectX::XMVectorGetZ(rayOrigin),
-	};
-	std::vector<float> v2 = {
-		DirectX::XMVectorGetX(rayDirection),
-		DirectX::XMVectorGetY(rayDirection),
-		DirectX::XMVectorGetZ(rayDirection), };
-	lines.push_back(std::move(std::make_unique<Line>(v1,v2,1,0,0,wnd.Gfx())));
-	return grid->ifHit(rayOrigin, rayDirection);
-}
-//*/

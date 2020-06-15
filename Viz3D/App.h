@@ -34,6 +34,7 @@ private:
 	void DoFrame();
 	void mineData();
 	void ShowPickedFrame();
+	void showFramesOf(vector<std::shared_ptr<Cell>> cells);
 	void makeComboCubes();
 	void openFile();
 	shared_ptr<Surface> buildSurface(std::shared_ptr<CubeCell> c1, std::shared_ptr<CubeCell> c2, std::shared_ptr<CubeCell> c3);
