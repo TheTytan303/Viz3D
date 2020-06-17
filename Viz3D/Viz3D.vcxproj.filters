@@ -55,6 +55,15 @@
     <Filter Include="Source Files\ImGUI">
       <UniqueIdentifier>{5235c378-e221-4de6-b2ee-e39fb62994a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Header Files\Cube">
+      <UniqueIdentifier>{38d0e12b-7cbe-4b12-b05c-4bf2b7f03178}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Header Files\Hexal">
+      <UniqueIdentifier>{855328de-5380-43c3-a745-055455e16d8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Source Files\Hexal">
+      <UniqueIdentifier>{633f0e79-054f-40fd-8a3e-d52ca5b241f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="WinMain.cpp">
@@ -162,6 +171,12 @@
     <ClCompile Include="Surface.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Hexal.cpp">
+      <Filter>Core\Source Files\Hexal</Filter>
+    </ClCompile>
+    <ClCompile Include="HexalFrame.cpp">
+      <Filter>Core\Source Files\Hexal</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CustomException.h">
@@ -257,22 +272,10 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\DXAPI</Filter>
     </ClInclude>
-    <ClInclude Include="CubeFrame.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Line.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Cell.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ComboCube.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CubeCell.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Grid.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Star.h">
@@ -280,6 +283,24 @@
     </ClInclude>
     <ClInclude Include="Surface.h">
       <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeCell.h">
+      <Filter>Core\Header Files\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="CubeFrame.h">
+      <Filter>Core\Header Files\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Core\Header Files\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="Hexal.h">
+      <Filter>Core\Header Files\Hexal</Filter>
+    </ClInclude>
+    <ClInclude Include="ComboCube.h">
+      <Filter>Core\Header Files\Cube</Filter>
+    </ClInclude>
+    <ClInclude Include="HexalFrame.h">
+      <Filter>Core\Header Files\Hexal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

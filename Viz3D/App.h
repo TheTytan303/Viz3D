@@ -4,6 +4,8 @@
 #include "CubeFrame.h"
 #include "Line.h"
 #include "Star.h"
+#include "Hexal.h"
+#include "HexalFrame.h"
 #include "Surface.h"
 #include "ComboCube.h"
 #include "Grid.h"
@@ -20,6 +22,8 @@ class App {
 	std::vector<std::unique_ptr<Line>> lines;
 	std::vector<std::unique_ptr<Star>> stars;
 	std::vector<std::shared_ptr<Surface>> surfaces;
+	std::vector<std::shared_ptr<Hexal>> hexals;
+	std::vector<std::shared_ptr<HexalFrame>> hexalFrames;
 	std::vector<std::shared_ptr<ComboCube>> comboCubes;
 	bool show_gui_window = true;
 	float pX = 0;

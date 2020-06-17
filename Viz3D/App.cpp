@@ -36,6 +36,18 @@ int App::Go()
 	filepath = wss.str();
 	mineData();
 
+	unsigned short meshSize[3] = { 1,1,1 };
+	std::vector<float> values;
+	values.push_back(2.3f);
+	std::shared_ptr<Cell> tmp_cell = std::make_shared<Cell>(1, 1, 1, 2, values);
+
+	//Hexal h(tmp_cell, wnd.Gfx());
+	unique_ptr<Hexal> hexal = make_unique<Hexal>( tmp_cell,wnd.Gfx());
+	hexals.push_back(std::move(hexal));
+	unique_ptr<HexalFrame> hf = make_unique<HexalFrame>(meshSize, 1,1,1, 0,0,0,wnd.Gfx());
+	hexalFrames.push_back(std::move(hf));
+
+
 	std::vector<float> v1 = {0,0,0};
 	stars.push_back(std::make_unique<Star>(v1, 1, 1, 0, wnd.Gfx()));
 	MSG msg;
@@ -98,7 +110,7 @@ int App::Go()
 				ShowPickedFrame();
 				if (pickedCells.size() > 2)
 				{
-					int last = pickedCells.size();
+					int last = (int)pickedCells.size();
 					surfaces.clear();
 					shared_ptr<Surface> pSurface = buildSurface(
 						pickedCells[last - 3], pickedCells[last - 2], pickedCells[last - 1]
@@ -277,9 +289,15 @@ void App::DoFrame()
 	for (auto& s : surfaces) {
 		s->Draw(wnd.Gfx());
 	}
+	for (auto& h : hexals) {
+		h->Draw(wnd.Gfx());
+	}
+	for (auto& hs : hexalFrames) {
+		hs->Draw(wnd.Gfx());
+	}
 	if (grid != nullptr)
 	{
-		grid->Draw(wnd.Gfx());
+		//grid->Draw(wnd.Gfx());
 	}
 	//*
 	if (show_gui_window)

@@ -156,6 +156,8 @@
     <ClCompile Include="DxgiInfoManager.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="Grid.cpp" />
+    <ClCompile Include="Hexal.cpp" />
+    <ClCompile Include="HexalFrame.cpp" />
     <ClCompile Include="imgui.cpp" />
     <ClCompile Include="imgui_demo.cpp" />
     <ClCompile Include="imgui_draw.cpp" />
@@ -195,6 +197,8 @@
     <ClInclude Include="DxgiInfoManager.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="Hexal.h" />
+    <ClInclude Include="HexalFrame.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
     <ClInclude Include="imgui_impl_dx11.h" />
