@@ -1,4 +1,5 @@
 #include "Grid.h"
+
 Grid::Grid(std::shared_ptr<DataMiner> pDataMiner)
 {
 	size[0] = pDataMiner->GetMeshSize()[0];
@@ -49,13 +50,14 @@ shared_ptr<Cell> Grid::getCell(unsigned short x, unsigned short y, unsigned shor
 	}
 	return cells[(int)x + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)]->cell;
 }
-shared_ptr<CubeCell> Grid::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction)
+
+shared_ptr<DrawableCell> Grid::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction)
 {
 	if (this == nullptr)
 	{
 		return nullptr;
 	}
-	shared_ptr<CubeCell> returnVale;
+	shared_ptr<DrawableCell> returnVale;
 	float lastOne = 0.0f;
 	for (auto cell: visibles)
 	{
@@ -82,6 +84,7 @@ shared_ptr<CubeCell> Grid::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR dir
 		return returnVale;
 	return nullptr;
 }
+
 shared_ptr<CellView> Grid::getCellView(unsigned short x, unsigned short y, unsigned short z)
 {
 	if (x >= size[0] || y >= size[1] || z >= size[2] || x <0 || y<0 || z<0)
@@ -90,7 +93,8 @@ shared_ptr<CellView> Grid::getCellView(unsigned short x, unsigned short y, unsig
 	}
 	return cells[(int)x + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)];
 }
-void Grid::setCell(unsigned short x, unsigned short y, unsigned short z, shared_ptr<CubeCell> cell)
+
+void Grid::setCell(unsigned short x, unsigned short y, unsigned short z, shared_ptr<DrawableCell> cell)
 {
 	shared_ptr<CellView> tmp = make_shared<CellView>();
 	tmp->cell = cell;
@@ -98,6 +102,7 @@ void Grid::setCell(unsigned short x, unsigned short y, unsigned short z, shared_
 	// TODO
 	cells[((int)x )+ ((int)size[0] * (int)y) +((int)size[1] * (int)size[0] * (int)z)] = tmp;
 }
+
 void Grid::setCell(shared_ptr<Cell> cell)
 {
 	int x = cell.get()->getMeshCoords()[0];
@@ -165,23 +170,24 @@ void Grid::setCell(shared_ptr<Cell> cell)
 
 	cells[((int)x) + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)] = target;
 }
+
 void Grid::Draw(Graphics& Gfx)
 {
-	//vector<shared_ptr<CubeCell>> tmp = getVisableCells();
 	for (auto cell : visibles)
 	{
 		cell->Draw(Gfx);
 	}
 }
 
-vector<shared_ptr<CubeCell>> Grid::getVisableCells()
+vector<shared_ptr<DrawableCell>> Grid::getVisableCells()
 {
 	return visibles;
 }
-vector<shared_ptr<CubeCell>> Grid::makeVisableCells(Graphics& gfx)
+
+vector<shared_ptr<DrawableCell>> Grid::makeVisableCells(Graphics& gfx, shared_ptr<DrawableCell> (*cellMaker)(unsigned short* size, std::shared_ptr<Cell>, Graphics& gfx))
 {
 	if (this == nullptr)
-		return vector<shared_ptr<CubeCell>>();
+		return vector<shared_ptr<DrawableCell>>();
 	visibles.clear();
 	int count = ((int)size[0] * (int)size[1] * (int)size[2]);
 	for (int i = 0; i < count; i++)
@@ -194,7 +200,7 @@ vector<shared_ptr<CubeCell>> Grid::makeVisableCells(Graphics& gfx)
 			}
 			if (cells[i]->neighbours != 0)
 			{
-				visibles.push_back( std::make_shared<CubeCell>(size, cells[i]->cell, gfx) );
+				visibles.push_back( move(cellMaker(size, cells[i]->cell, gfx)));
 			}
 		}
 	}
@@ -229,6 +235,7 @@ void Grid::Slice(shared_ptr<Surface> s, bool side)
 		}
 	}
 }
+
 void Grid::deSlice()
 {
 	if (slices.size() == 0)

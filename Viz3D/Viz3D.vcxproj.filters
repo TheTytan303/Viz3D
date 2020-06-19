@@ -55,14 +55,23 @@
     <Filter Include="Source Files\ImGUI">
       <UniqueIdentifier>{5235c378-e221-4de6-b2ee-e39fb62994a5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Header Files\Cube">
+    <Filter Include="Core\Header Files\Drawable">
+      <UniqueIdentifier>{6ea6b00b-d94b-44ed-9afb-c1b8a72a451b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Source Files\Drawable">
+      <UniqueIdentifier>{03af82ea-5fa6-493f-ada9-dffd65b19abd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Source Files\Drawable\Hexal">
+      <UniqueIdentifier>{633f0e79-054f-40fd-8a3e-d52ca5b241f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Source Files\Drawable\Cube">
+      <UniqueIdentifier>{d146af83-31a9-42e8-9720-ed9e7842a148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Header Files\Drawable\Cube">
       <UniqueIdentifier>{38d0e12b-7cbe-4b12-b05c-4bf2b7f03178}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Header Files\Hexal">
+    <Filter Include="Core\Header Files\Drawable\Hexal">
       <UniqueIdentifier>{855328de-5380-43c3-a745-055455e16d8f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Core\Source Files\Hexal">
-      <UniqueIdentifier>{633f0e79-054f-40fd-8a3e-d52ca5b241f8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -86,9 +95,6 @@
     </ClCompile>
     <ClCompile Include="dxerr.cpp">
       <Filter>Source Files\DXAPI</Filter>
-    </ClCompile>
-    <ClCompile Include="CubeCell.cpp">
-      <Filter>Core\Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DataMiner.cpp">
       <Filter>Core\Source Files</Filter>
@@ -147,15 +153,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\DXAPI</Filter>
     </ClCompile>
-    <ClCompile Include="CubeFrame.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Line.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ComboCube.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Grid.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
@@ -165,17 +162,32 @@
     <ClCompile Include="Cell.cpp">
       <Filter>Core\Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Star.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Surface.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Hexal.cpp">
-      <Filter>Core\Source Files\Hexal</Filter>
+      <Filter>Core\Source Files\Drawable\Hexal</Filter>
     </ClCompile>
     <ClCompile Include="HexalFrame.cpp">
-      <Filter>Core\Source Files\Hexal</Filter>
+      <Filter>Core\Source Files\Drawable\Hexal</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawableCell.cpp">
+      <Filter>Core\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ComboCube.cpp">
+      <Filter>Core\Source Files\Drawable\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeCell.cpp">
+      <Filter>Core\Source Files\Drawable\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="CubeFrame.cpp">
+      <Filter>Core\Source Files\Drawable\Cube</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Core\Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Star.cpp">
+      <Filter>Core\Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="Surface.cpp">
+      <Filter>Core\Source Files\Drawable</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -272,35 +284,41 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\DXAPI</Filter>
     </ClInclude>
-    <ClInclude Include="Line.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Cell.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Star.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Surface.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CubeCell.h">
-      <Filter>Core\Header Files\Cube</Filter>
+      <Filter>Core\Header Files\Drawable\Cube</Filter>
     </ClInclude>
     <ClInclude Include="CubeFrame.h">
-      <Filter>Core\Header Files\Cube</Filter>
-    </ClInclude>
-    <ClInclude Include="Grid.h">
-      <Filter>Core\Header Files\Cube</Filter>
+      <Filter>Core\Header Files\Drawable\Cube</Filter>
     </ClInclude>
     <ClInclude Include="Hexal.h">
-      <Filter>Core\Header Files\Hexal</Filter>
+      <Filter>Core\Header Files\Drawable\Hexal</Filter>
     </ClInclude>
     <ClInclude Include="ComboCube.h">
-      <Filter>Core\Header Files\Cube</Filter>
+      <Filter>Core\Header Files\Drawable\Cube</Filter>
     </ClInclude>
     <ClInclude Include="HexalFrame.h">
-      <Filter>Core\Header Files\Hexal</Filter>
+      <Filter>Core\Header Files\Drawable\Hexal</Filter>
+    </ClInclude>
+    <ClInclude Include="HexalGrid.h">
+      <Filter>Core\Header Files\Drawable\Hexal</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawableCell.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Core\Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Star.h">
+      <Filter>Core\Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Surface.h">
+      <Filter>Core\Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="Grid.h">
+      <Filter>Core\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

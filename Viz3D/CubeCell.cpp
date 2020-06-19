@@ -11,60 +11,12 @@
 #include <memory>
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
-//--------------------=Static=----------------
-std::shared_ptr<std::vector<float>> CubeCell::getColorOf(int grain) noexcept
-{
-	return CubeCell::colors.at(grain);
-}
-bool CubeCell::addColor(int grain) noexcept
-{
-	if (colors.count(grain)) {
-		std::shared_ptr<std::vector<float>> returnVale = std::make_shared<std::vector<float>>();
-		for (int i = 0; i < 3; i++) {
-			returnVale->push_back(static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
-		}
-		colors[grain] = returnVale;
-		return true;
-	}
-	else
-	{
-		std::shared_ptr<std::vector<float>> returnVale = std::make_shared<std::vector<float>>();
-		for (int i = 0; i < 3; i++) {
-			returnVale->push_back(static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
-		}
-		colors[grain] = returnVale;
-		return false;
-	}
-}
-bool CubeCell::setColor(int grain,const std::vector<float> color) noexcept
-{
-	if (colors.count(grain)) {
-		colors[grain] = std::make_shared<std::vector<float>>(color);
-		return true;
-	}
-	else
-	{
-		colors[grain] = std::make_shared<std::vector<float>>(color);
-		return false;
-	}
-}
-void CubeCell::initGrain(int id){
-	if (colors.find(id) == colors.end())
-	{
-		CubeCell::addColor(id);
-	}
-};
-//inits:
-float CubeCell::size = 0.5f;
-std::map<int, std::shared_ptr<std::vector<float>>> CubeCell::colors = {};
-
-
 
 //--------------------=non-Static=----------------
 
 CubeCell::CubeCell(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx)
 	:
-	Cell(cell)
+	DrawableCell(cell)
 {
 	if (!isStaticInitialized()) {
 		struct Vertex {
@@ -133,49 +85,15 @@ CubeCell::CubeCell(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphic
 
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 
-	this->coords[0] = meshCoords[0] - (meshSize[0] / 2);
-	this->coords[1] = meshCoords[1] - (meshSize[1] / 2);
-	this->coords[2] = meshCoords[2] - (meshSize[2] / 2);
+	this->coords[0] =(float)(meshCoords[0] - (meshSize[0] / 2));
+	this->coords[1] =(float)(meshCoords[1] - (meshSize[1] / 2));
+	this->coords[2] =(float)(meshCoords[2] - (meshSize[2] / 2));
 }
 
 std::shared_ptr<std::vector<float>> CubeCell::getColor()
 {
-	return colors.at(grainID);
+	return DrawableCell::colors.at(grainID);
 }
-/*
-std::vector<DirectX::XMVECTOR> CubeCell::GetTriangles() const noexcept
-{
-	struct Vertex
-	{
-		float x;
-		float y;
-		float z;
-	};
-	std::vector<DirectX::XMVECTOR> returnVale;
-	std::vector<Vertex> vertices =
-	{
-		{-1.0f,-1.0f,-1.0f},
-		{ 1.0f,-1.0f,-1.0f},
-		{-1.0f, 1.0f,-1.0f},
-		{ 1.0f, 1.0f,-1.0f},
-		{-1.0f,-1.0f, 1.0f},
-		{ 1.0f,-1.0f, 1.0f},
-		{-1.0f, 1.0f, 1.0f},
-		{ 1.0f, 1.0f, 1.0f},
-	};
-	const std::vector<unsigned short> indecies =
-	{
-		0,2,1, 2,3,1,	//back
-		1,3,5, 3,7,5,	//right
-		2,6,3, 3,6,7,	//top
-		4,5,7, 4,7,6,	//front
-		0,4,2, 2,4,6,	//left
-		0,1,4, 1,5,4,	//bottom
-	};
-
-	return returnVale;
-}
-*/
 float CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept
 {
 	std::vector<DirectX::XMVECTOR> vertices =
@@ -226,54 +144,26 @@ float CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, flo
 			}
 		}
 	}
-	//DirectX::TriangleTests::Intersects();
 	return returnVale;
 }
 
-void CubeCell::setColor(std::vector<float> color, Graphics& gfx)
-{
-	const ColorBuffer cb = {
-		{
-			{
-			color.at(0),
-			color.at(1),
-			color.at(2),
-			1.0f
-			}
-		}
-	};
-	pColorBuffer->update(gfx, cb);
-}
-void CubeCell::resetColor(Graphics& gfx)
-{
-	const ColorBuffer cb2 = {
-		{
-			{
-			colors.at(grainID)->at(0),
-			colors.at(grainID)->at(1),
-			colors.at(grainID)->at(2),
-			1.0f
-			}
-		}
-	};
-	pColorBuffer->update(gfx, cb2);
-}
 
-
-
-short* CubeCell::getCoords() const
+float* CubeCell::getCoords() const
 {
-	short* returnVale = new short[3];
-	returnVale[0] = coords[0];
-	returnVale[1] = coords[1];
-	returnVale[2] = coords[2];
+	float* returnVale = new float[3];
+	returnVale[0] = (float)coords[0];
+	returnVale[1] = (float)coords[1];
+	returnVale[2] = (float)coords[2];
 	return returnVale;
 }
 
 DirectX::XMMATRIX CubeCell::GetTransformXM() const noexcept
 {
 	return
-		DirectX::XMMatrixScaling(size, size, size) *
+		DirectX::XMMatrixScaling(
+			DrawableCell::size, 
+			DrawableCell::size,
+			DrawableCell::size) *
 		DirectX::XMMatrixTranslation((float)coords[0], (float)coords[1], (float)coords[2])
 	;
 };

@@ -7,20 +7,21 @@
 
 class HexalFrame : public DrawableBase<HexalFrame>
 {
-//--------------------=Static=----------------
-protected:
-	static std::map<int, std::shared_ptr<std::vector<float>>> colors;
-public:
-	static std::shared_ptr<std::vector<float>> getColorOf(int grain) noexcept;
-	static bool addColor(int grain) noexcept;
-	static bool setColor(int grain, std::vector<float> color) noexcept;
-	static void initGrain(int id);
-	static float size;
 
+	//--------------------=Fields=----------------
+private:
+	float size;			//4B
+	float coords[3];			//6B
 public:
 	HexalFrame(
+		float size,
 		unsigned short* meshSize,
 		unsigned short x, unsigned short y, unsigned short z,
+		float red, float blue, float green,
+		Graphics& gfx);
+	HexalFrame(
+		float size,
+		float coords[3],
 		float red, float blue, float green,
 		Graphics& gfx);
 

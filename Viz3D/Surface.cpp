@@ -96,7 +96,7 @@ float Surface::onSurface(Point p)
 {
 	float returnVale = (p.x * A) + (p.y * B) + (p.z * C) + D;
 	//if (returnVale < 0) returnVale *= -1;
-	float tmp = sqrt((A*A)+(B*B)+(C*C));
+	float tmp = (float)sqrt((A*A)+(B*B)+(C*C));
 	return returnVale/tmp;
 }
 DirectX::XMMATRIX Surface::GetTransformXM() const noexcept

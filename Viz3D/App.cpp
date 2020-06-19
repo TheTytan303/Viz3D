@@ -18,6 +18,21 @@
 #include <vector>
 #include <string>
 #include <memory>
+
+//Specific CellMakers:
+shared_ptr<DrawableCell> makeCubeCell(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
+{
+	return std::make_shared<CubeCell>(size, c, gfx);
+}
+
+shared_ptr<DrawableCell> makeHexal(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
+{
+	return std::make_shared<Hexal>(size, c, gfx);
+}
+
+
+
+
 App::App()
 	:
 	wnd(800, 600, L"App window")
@@ -36,20 +51,20 @@ int App::Go()
 	filepath = wss.str();
 	mineData();
 
-	unsigned short meshSize[3] = { 1,1,1 };
-	std::vector<float> values;
-	values.push_back(2.3f);
-	std::shared_ptr<Cell> tmp_cell = std::make_shared<Cell>(1, 1, 1, 2, values);
+	//unsigned short meshSize[3] = { 1,1,1 };
+	//std::vector<float> values;
+	//values.push_back(2.3f);
+	//std::shared_ptr<Cell> tmp_cell = std::make_shared<Cell>(1, 1, 1, 2, values);
 
 	//Hexal h(tmp_cell, wnd.Gfx());
-	unique_ptr<Hexal> hexal = make_unique<Hexal>( tmp_cell,wnd.Gfx());
-	hexals.push_back(std::move(hexal));
-	unique_ptr<HexalFrame> hf = make_unique<HexalFrame>(meshSize, 1,1,1, 0,0,0,wnd.Gfx());
-	hexalFrames.push_back(std::move(hf));
+	//unique_ptr<Hexal> hexal = make_unique<Hexal>( tmp_cell,wnd.Gfx());
+	//hexals.push_back(std::move(hexal));
+	//unique_ptr<HexalFrame> hf = make_unique<HexalFrame>(meshSize, 1,1,1, 0,0,0,wnd.Gfx());
+	//hexalFrames.push_back(std::move(hf));
 
 
 	std::vector<float> v1 = {0,0,0};
-	stars.push_back(std::make_unique<Star>(v1, 1, 1, 0, wnd.Gfx()));
+	stars.push_back(std::make_unique<Star>(v1, 1.0f, 1.0f, 0.0f, wnd.Gfx()));
 	MSG msg;
 	BOOL gResult;
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
@@ -116,14 +131,14 @@ int App::Go()
 						pickedCells[last - 3], pickedCells[last - 2], pickedCells[last - 1]
 						);
 					grid->Slice(pSurface, true);
-					grid->makeVisableCells(wnd.Gfx());
+					makeVisableCells();
 				}
 				break;
 			}
 			case Mouse::Event::Type::RPress:
 			{
 				grid->deSlice();
-				grid->makeVisableCells(wnd.Gfx());
+				makeVisableCells();
 				frames.clear();
 				lines.clear();
 				break;
@@ -218,58 +233,13 @@ void App::mineData()
 	//grid.~unique_ptr();
 	//std::Deleter(grid);
 	grid = std::make_unique<Grid>(pMiner);
-	grid->makeVisableCells(wnd.Gfx());
+	makeVisableCells();
 }
 
 
 void App::makeComboCubes()
 {
-	/*
-	if (comboCubes.size() > 0)
-	{
-		//comboCubes = vector<std::shared_ptr<ComboCube>>();
-		comboCubes.clear();
-		return;
-	}
-	//unsigned short* size = pMiner->meshSize;
-	unsigned short* size = grid->getSize();
-	//int n = (int)size[0] * (int)size[1] * (int)size[2];
-	for (unsigned short i = 0; i < size[0]; i+=2)
-	{
-		for (unsigned short j = 0; j< size[1]; j+=2)
-		{
-			for (unsigned short k = 0; k<size[2]; k+=2)
-			{
-				try
-				{
-					std::vector<std::shared_ptr<CubeCell>> subCubes;
-					subCubes.push_back(grid->getCell(i,		j,		k));			//LBD
-					subCubes.push_back(grid->getCell(i + 1, j,		k));		//RBD
-					subCubes.push_back(grid->getCell(i, j + 1, k));
-					subCubes.push_back(grid->getCell(i + 1, j + 1, k));
-					subCubes.push_back(grid->getCell(i, j, k + 1));
-					subCubes.push_back(grid->getCell(i + 1, j,		k + 1));
-					subCubes.push_back(grid->getCell(i, j + 1, k + 1));
-					subCubes.push_back(grid->getCell(i + 1, j + 1,	k + 1));
 
-					for (int i = 0; i < 8; i++)
-					{
-						if (subCubes[i]!=nullptr)
-						{
-							std::shared_ptr<ComboCube> pComboCube;
-							pComboCube = std::make_shared<ComboCube>(size, subCubes, wnd.Gfx());
-							comboCubes.push_back(std::move(pComboCube));
-						}
-					}
-				}
-				catch (...)
-				{
-
-				}
-			}
-		}
-	}
-	//*/
 }
 
 
@@ -297,7 +267,7 @@ void App::DoFrame()
 	}
 	if (grid != nullptr)
 	{
-		//grid->Draw(wnd.Gfx());
+		grid->Draw(wnd.Gfx());
 	}
 	//*
 	if (show_gui_window)
@@ -491,7 +461,7 @@ void App::openFile()
 	}
 }
 
-shared_ptr<Surface> App::buildSurface(std::shared_ptr<CubeCell> c1, std::shared_ptr<CubeCell> c2, std::shared_ptr<CubeCell> c3)
+shared_ptr<Surface> App::buildSurface(std::shared_ptr<DrawableCell> c1, std::shared_ptr<DrawableCell> c2, std::shared_ptr<DrawableCell> c3)
 { 
 	float size = 1.0f;
 	vector<Surface::Point> points
@@ -505,7 +475,7 @@ shared_ptr<Surface> App::buildSurface(std::shared_ptr<CubeCell> c1, std::shared_
 		wnd.Gfx());
 }
 
-std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight)
+std::shared_ptr<DrawableCell> App::getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight)
 {
 	using namespace DirectX;
 	float m_screenWidth = (float)screenWidth;
@@ -572,4 +542,17 @@ std::shared_ptr<CubeCell> App::getPickedItem(int mouseX, int mouseY, int screenW
 		DirectX::XMVectorGetY(rayDirection),
 		DirectX::XMVectorGetZ(rayDirection), };
 	return grid->ifHit(rayOrigin, rayDirection);
+}
+
+
+void App::makeVisableCells()
+{
+	switch (cellType)
+	{
+	case CubeCell:
+		grid->makeVisableCells(wnd.Gfx(), makeCubeCell);
+		break;
+	case Hexal:
+		grid->makeVisableCells(wnd.Gfx(), makeHexal);
+	}
 }

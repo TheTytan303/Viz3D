@@ -1,30 +1,23 @@
 #pragma once
+#include "HexalFrame.h"
 #include "ConstantBuffer.h"
-#include "Cell.h"
 #include "Graphics.h"
-#include "DrawableBase.h"
+#include "DrawableCell.h"
+#include <memory>
 
-struct ColorBuffer
-{
-	struct
-	{
-		float r;
-		float g;
-		float b;
-		float a;
-	}face_colors[1];
-};
 
-class Hexal : public Cell, public DrawableBase<Hexal>
+class Hexal : public DrawableCell
 {
+//--------------------=Fields=----------------
+	std::shared_ptr<HexalFrame> frame;
+//--------------------=Methods=----------------
 public:
 	Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx);
 
-private:
-	short coords[3];
-	ConstantBuffer<ColorBuffer>* pColorBuffer;
-
-
+	//Inharited via DrawableCell
+	float ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept override;
+	float* getCoords() const override;
 	//Inharited via Drawable
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;
+	void Draw(Graphics& gfx) const noexcept override;
 };

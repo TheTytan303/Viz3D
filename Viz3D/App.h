@@ -30,6 +30,12 @@ class App {
 	float pY = 0;
 	int cX = 0;
 	int cY = 0;
+	enum CellType {
+		CubeCell,
+		Hexal
+
+	};
+	CellType cellType = Hexal;
 public:
 	App();
 	int Go();
@@ -41,17 +47,18 @@ private:
 	void showFramesOf(vector<std::shared_ptr<Cell>> cells);
 	void makeComboCubes();
 	void openFile();
-	shared_ptr<Surface> buildSurface(std::shared_ptr<CubeCell> c1, std::shared_ptr<CubeCell> c2, std::shared_ptr<CubeCell> c3);
+	shared_ptr<Surface> buildSurface(std::shared_ptr<DrawableCell> c1, std::shared_ptr<DrawableCell> c2, std::shared_ptr<DrawableCell> c3);
 	//std::shared_ptr<CubeCell> getPickedItem2(int mouseX, int mouseY, int screenWidth, int screenHeight);
 	//void sample(float mouseX, float mouseY, int screenWidth, int screenHeight);
 private:
-	std::shared_ptr<CubeCell> getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight);
+	std::shared_ptr<DrawableCell> getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight);
 	Camera camera;
 	std::shared_ptr<DataMiner> pMiner;
 	Window wnd;
 	ImguiManager imgui;
 	//char filename[1024] = "state_30x30x30.txt";
 	wstring filepath = L"100.txt";
-	std::shared_ptr<CubeCell> picked;
-	vector<std::shared_ptr<CubeCell>> pickedCells;
+	std::shared_ptr<DrawableCell> picked;
+	vector<std::shared_ptr<DrawableCell>> pickedCells;
+	void makeVisableCells();
 };

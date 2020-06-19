@@ -1,12 +1,9 @@
 #pragma once
-#include "CubeCell.h"
+#include "DrawableCell.h"
 #include "Graphics.h"
 #include "DataMiner.h"
 #include "Surface.h"
-
-//tmp
-#include "CubeFrame.h";
-
+#include "CubeFrame.h"
 #include <memory>
 #include <DirectXMath.h>
 
@@ -23,13 +20,12 @@ struct Slices
 };
 
 
-
 class Grid
 {
-
+	
 private:
-	shared_ptr<CellView>* cells;	
-	vector<shared_ptr<CubeCell>> visibles;	
+	shared_ptr<CellView>* cells;
+	vector<shared_ptr<DrawableCell>> visibles;
 	vector<Slices> slices;	
 	float* minis;
 	float* maxes;
@@ -51,12 +47,12 @@ public:
 	}
 	shared_ptr<CellView> getCellView(unsigned short x, unsigned short y, unsigned short z);
 	shared_ptr<Cell> getCell(unsigned short x, unsigned short y, unsigned short z);
-	shared_ptr<CubeCell> ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction);
-	void setCell(unsigned short x, unsigned short y, unsigned short z, shared_ptr<CubeCell> cell);
+	shared_ptr<DrawableCell> ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction);
+	void setCell(unsigned short x, unsigned short y, unsigned short z, shared_ptr<DrawableCell> cell);
 	void setCell(shared_ptr<Cell> cell);
 	void Draw(Graphics& Gfx);
-	vector<shared_ptr<CubeCell>> getVisableCells();
-	vector<shared_ptr<CubeCell>> makeVisableCells(Graphics& gfx);
+	vector<shared_ptr<DrawableCell>> getVisableCells();
+	vector<shared_ptr<DrawableCell>> makeVisableCells(Graphics& gfx, shared_ptr<DrawableCell>(*cellMaker)(unsigned short* size, std::shared_ptr<Cell>, Graphics& gfx));
 
 	void Slice(shared_ptr<Surface> s, bool side);
 	void deSlice();
@@ -66,6 +62,10 @@ public:
 
 	void showVariable(int valueNo, Graphics& gfx);
 	void resetColors(Graphics& gfx);
+
+	
+
+
 private:
 	vector<float> getColor(float max, float min, float val);
 	bool outOfBounds(shared_ptr<Cell> c) const;

@@ -71,7 +71,6 @@ DataMiner::DataMiner(const std::wstring fileName)
 	CubeCell::setNames(valuesNames);
 }
 
-
 DataMiner::~DataMiner() noexcept
 {
 
@@ -99,7 +98,7 @@ std::unique_ptr<Cell> DataMiner::GetNextCell()
 	}
 	int grain = (int)values[0];
 	values.erase(values.begin());
-	initGrain(grain);
+	//initGrain(grain);
 	std::unique_ptr<Cell> returnVale = std::make_unique<Cell>(x, y, z, grain, values);
 	return returnVale;
 }
@@ -145,7 +144,7 @@ std::vector<std::string> DataMiner::GetValuesNames() noexcept
 void DataMiner::initGrain(int id) noexcept {
 	if (!std::count(grains.begin(), grains.end(), id))
 	{
-		CubeCell::addColor(id);
+		//CubeCell::addColor(id);
 		grains.push_back(id);
 	}
 }

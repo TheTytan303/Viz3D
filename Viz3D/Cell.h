@@ -9,6 +9,17 @@
 	getGrain - zwraca ID ziarna
 
 */
+
+struct ColorBuffer
+{
+	struct
+	{
+		float r;
+		float g;
+		float b;
+		float a;
+	}face_colors[1];
+};
 class Cell 
 {
 	
