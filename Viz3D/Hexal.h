@@ -6,7 +6,7 @@
 #include <memory>
 
 
-class Hexal : public DrawableCell
+class Hexal : public DrawableCell<Hexal>
 {
 //--------------------=Fields=----------------
 	std::shared_ptr<HexalFrame> frame;

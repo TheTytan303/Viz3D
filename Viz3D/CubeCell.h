@@ -9,7 +9,7 @@
 #include <string>
 #include <map>
 
-class CubeCell :  public DrawableCell
+class CubeCell :  public DrawableCell<CubeCell>
 {
 
 //--------------------=Methods=----------------

@@ -16,7 +16,7 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 	:
 	DrawableCell(cell)
 {
-	if (!isStaticInitialized()) {
+	if (!DrawableBase<Hexal>::isStaticInitialized()) {
 		struct Vertex {
 			struct {
 				float x;
@@ -66,7 +66,7 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 			{ a , -1 ,   a}, // 2 -> 22
 			{-a,  -1 ,   a}, // 3 -> 23
 		};
-		AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
+		DrawableBase<Hexal>::AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
 		//triangle List
 		//*
 		const std::vector<unsigned short> indecies =
@@ -134,24 +134,24 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 			20,21,22,
 			20,22,23,
 		};
-		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
+		DrawableBase<Hexal>::AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
 
-		AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
+		DrawableBase<Hexal>::AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
 		auto pvs = std::make_unique<VertexShader>(gfx, L"VertexShader.cso");
 		auto pvsbc = pvs->GetBytecode();
-		AddStaticBind(std::move(pvs));
+		DrawableBase<Hexal>::AddStaticBind(std::move(pvs));
 
 		const std::vector<D3D11_INPUT_ELEMENT_DESC> ied =
 		{
 			{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0},
 		};
-		AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
-		AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
+		DrawableBase<Hexal>::AddStaticBind(std::make_unique<InputLayout>(gfx, ied, pvsbc));
+		DrawableBase<Hexal>::AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST));
 		//AddStaticBind(std::make_unique<Topology>(gfx, D3D11_PRIMITIVE_TOPOLOGY_LINELIST));
 	}
 	else
 	{
-		SetIndexFromStatic();
+		DrawableBase<Hexal>::SetIndexFromStatic();
 	}
 	struct ConstantBuffer2
 	{
@@ -172,8 +172,8 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 			1.0f
 		}
 	};
-	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
-	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
+	DrawableBase<Hexal>::AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
+	DrawableBase<Hexal>::AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 
 	int x = (meshCoords[0] - (meshSize[0] / 2));
 	int y = (meshCoords[1] - (meshSize[1] / 2));
@@ -181,24 +181,24 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 	this->coords[0] = (float)x;
 	this->coords[1] = (float)y;
 	this->coords[2] = (float)z;
-	if (x % 2 != 0)
-	{
-		this->coords[2] += 0.5f;
-		this->coords[1] += 0.5f;
-	}
+	//if (x % 2 != 0)
+	//{
+	//	this->coords[2] += 0.5f;
+	//	this->coords[1] += 0.5f;
+	//}
 	if (y % 2 != 0)
 	{
 		this->coords[0] += 0.5f;
 		this->coords[2] += 0.5f;
 	}
-	if (z % 2 != 0)
-	{
-		this->coords[1] += 0.5f;
-		this->coords[0] += 0.5f;
-	}
-	this->coords[0] /= 2.0f;
+	//if (z % 2 != 0)
+	//{
+	//	this->coords[1] += 0.5f;
+	//	this->coords[0] += 0.5f;
+	//}
+	//this->coords[0] /= 2.0f;
 	this->coords[1] /= 2.0f;
-	this->coords[2] /= 2.0f;
+	//this->coords[2] /= 2.0f;
 	DrawableCell::size = 0.5f;
 	frame = std::make_shared<HexalFrame>(size,coords,0.0f,0.0f,0.0f,gfx);
 }
@@ -367,7 +367,7 @@ DirectX::XMMATRIX Hexal::GetTransformXM() const noexcept
 
 void Hexal::Draw(Graphics& gfx) const noexcept
 {
-	this->Drawable::Draw(gfx);
+	this->DrawableBase<Hexal>::Draw(gfx);
 	if (frame != nullptr)
 	{
 		frame->Draw(gfx);

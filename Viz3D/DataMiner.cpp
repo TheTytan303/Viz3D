@@ -106,7 +106,7 @@ std::unique_ptr<Cell> DataMiner::GetNextCell()
 std::unique_ptr<Cell> DataMiner::GetCellAt(int index){
 	file.seekg(file.beg);
 	std::string cline;
-	for (int i = 0; i < index; i++)
+	for (int i = 0; i < index+1; i++)
 	{
 		if (file.eof()) {
 			throw "end of file";

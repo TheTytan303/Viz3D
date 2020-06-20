@@ -20,12 +20,12 @@
 #include <memory>
 
 //Specific CellMakers:
-shared_ptr<DrawableCell> makeCubeCell(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
+shared_ptr<CubeCell> makeCubeCell(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
 {
 	return std::make_shared<CubeCell>(size, c, gfx);
 }
 
-shared_ptr<DrawableCell> makeHexal(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
+shared_ptr<Hexal> makeHexal(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
 {
 	return std::make_shared<Hexal>(size, c, gfx);
 }
@@ -232,7 +232,7 @@ void App::mineData()
 	//grid.release();
 	//grid.~unique_ptr();
 	//std::Deleter(grid);
-	grid = std::make_unique<Grid>(pMiner);
+	buildGrid(pMiner);
 	makeVisableCells();
 }
 
@@ -292,37 +292,7 @@ void App::DoFrame()
 			}
 			ImGui::End();
 		}
-		/*
-		if (ImGui::Begin("frames: "))
-		{
-			ImGui::Text(" %.1f FPS", ImGui::GetIO().Framerate);
-		}
-		ImGui::End();
-		if (ImGui::Begin("Camera Position: "))
-		{
-			std::ostringstream oss;
-			oss << "X: ";
-			oss << DirectX::XMVectorGetX(camera.getPosition());
-			oss << " | Y:";
-			oss << DirectX::XMVectorGetY(camera.getPosition());
-			oss << " | Z:";
-			oss << DirectX::XMVectorGetZ(camera.getPosition());
-			ImGui::Text(oss.str().c_str());
-		}
-		ImGui::End();
-		if (ImGui::Begin("Camera Direction: "))
-		{
-			std::ostringstream oss2;
-			oss2 << "X: ";
-			oss2 << DirectX::XMVectorGetX(camera.getDirection());
-			oss2 << " | Y:";
-			oss2 << DirectX::XMVectorGetY(camera.getDirection());
-			oss2 << " | Z:";
-			oss2 << DirectX::XMVectorGetZ(camera.getDirection());
-			ImGui::Text(oss2.str().c_str());
-		}
-		ImGui::End();
-		//*/
+
 		if (ImGui::Begin("Input file"))
 		{
 			if (ImGui::Button("pickFile"))
@@ -333,7 +303,6 @@ void App::DoFrame()
 		ImGui::End();
 		if (ImGui::Begin("Grid Data:"))
 		{
-			std::ostringstream oss;
 			int count = (int)Cell::getNames().size();
 			if (count != 0)
 			{
@@ -343,12 +312,14 @@ void App::DoFrame()
 					if (ImGui::Button(Cell::getNames().at(i).c_str()))
 					{
 						grid->showVariable(i, wnd.Gfx());
+						ImGui::SameLine();
 					}
+					std::ostringstream oss;
 					oss << Cell::getNames().at(i) << ": ";
 					oss << grid->getMinis()[i] << " - ";
-					oss << grid->getMaxes()[i] << endl;
+					oss << grid->getMaxes()[i];
+					ImGui::Text(oss.str().c_str());
 				}
-				ImGui::Text(oss.str().c_str());
 				if (ImGui::Button("Show grains"))
 				{
 					grid->resetColors(wnd.Gfx());
@@ -357,6 +328,18 @@ void App::DoFrame()
 			else
 			{
 				ImGui::Text("no variables specified");
+			}
+		}
+		ImGui::End();
+
+		if (ImGui::Begin("Celling Type"))
+		{
+			ImGui::RadioButton("Cube Cell", &cellType, 0);
+			ImGui::RadioButton("Hexal", &cellType, 1);
+			if (ImGui::Button("Rebuild"))
+			{
+				buildGrid(pMiner);
+				makeVisableCells();
 			}
 		}
 		ImGui::End();
@@ -461,7 +444,7 @@ void App::openFile()
 	}
 }
 
-shared_ptr<Surface> App::buildSurface(std::shared_ptr<DrawableCell> c1, std::shared_ptr<DrawableCell> c2, std::shared_ptr<DrawableCell> c3)
+shared_ptr<Surface> App::buildSurface(std::shared_ptr<Cell> c1, std::shared_ptr<Cell> c2, std::shared_ptr<Cell> c3)
 { 
 	float size = 1.0f;
 	vector<Surface::Point> points
@@ -475,7 +458,7 @@ shared_ptr<Surface> App::buildSurface(std::shared_ptr<DrawableCell> c1, std::sha
 		wnd.Gfx());
 }
 
-std::shared_ptr<DrawableCell> App::getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight)
+std::shared_ptr<Cell> App::getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight)
 {
 	using namespace DirectX;
 	float m_screenWidth = (float)screenWidth;
@@ -545,14 +528,27 @@ std::shared_ptr<DrawableCell> App::getPickedItem(int mouseX, int mouseY, int scr
 }
 
 
+//switching through celltypes:
 void App::makeVisableCells()
 {
 	switch (cellType)
 	{
-	case CubeCell:
-		grid->makeVisableCells(wnd.Gfx(), makeCubeCell);
+	case 0:
+		dynamic_cast<Grid<::CubeCell>*>(grid)->makeVisableCells(wnd.Gfx(), makeCubeCell);
 		break;
-	case Hexal:
-		grid->makeVisableCells(wnd.Gfx(), makeHexal);
+	case 1:
+		dynamic_cast<Grid<::Hexal>*>(grid)->makeVisableCells(wnd.Gfx(), makeHexal);
+	}
+}
+
+void App::buildGrid(std::shared_ptr<DataMiner> pMiner)
+{
+	switch (cellType)
+	{
+	case 0:
+		grid = dynamic_cast<GridBase*>(new Grid<::CubeCell>(pMiner));
+		break;
+	case 1:
+		grid = dynamic_cast<GridBase*>(new Grid<::Hexal>(pMiner));
 	}
 }

@@ -1,13 +1,19 @@
 # Viz3D
 TODO:
- - HexCell*
+ - HexCell graficzna interpretacja zmiennych (Bugfix)
+ - HexCell mousePicking
+ - HexCell liczenie sąsiadów / poprawa algorytmu do wyznaczania zewnętrznych komórek
  - obsługa dużych plików
  - optymalizacja (Instancing)
  - optymalizacja ładowania
- - automatyczne nazywanie
+ - automatyczne nazywanie / rebuild DataMiner
  - algorytm do uogólniania
  - Kolory i skala(legenda) do graficznej interpretacji
  - wyszczególnianie ziarna
+
+ Update 20.06.2020 (Hexal)
+ + nowy rodzaj komórki: Hexal
+ + duża przebudowa kodu - wkorzystanie szablonów i możliwość łatwego roszerzania o kolejne kształty
 
  Update 15.06.2020
  + slice part 2

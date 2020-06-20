@@ -19,11 +19,7 @@ int CALLBACK WinMain(
 	) {
 
 	try {
-		//wnd.SetWindowTitle("try again!");
-		
 		return App().Go();
-		//message pump
-		
 	}
 	catch (const CustomException& e) {
 		MessageBoxA(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);

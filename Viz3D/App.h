@@ -9,6 +9,7 @@
 #include "Surface.h"
 #include "ComboCube.h"
 #include "Grid.h"
+#include "GridBase.h"
 #include "ImGuiManager.h"
 #include "DataMiner.h"
 #include "Camera.h"
@@ -16,8 +17,11 @@
 #include <vector>
 class App {
 
-	std::vector<std::shared_ptr<CubeCell>> cells;
-	std::unique_ptr<Grid> grid;
+	std::vector<std::shared_ptr<CubeCell>> cells; 
+	//TODO: Multiple Grids 
+	//std::unique_ptr<GridBase> grid;
+	//std::shared_ptr<GridBase> grid;
+	GridBase* grid;
 	std::vector<std::unique_ptr<CubeFrame>> frames;
 	std::vector<std::unique_ptr<Line>> lines;
 	std::vector<std::unique_ptr<Star>> stars;
@@ -30,12 +34,13 @@ class App {
 	float pY = 0;
 	int cX = 0;
 	int cY = 0;
+	int cellType=0;
 	enum CellType {
 		CubeCell,
 		Hexal
-
 	};
-	CellType cellType = Hexal;
+	//CellType cellType = CubeCell;
+	//CellType cellType = Hexal;
 public:
 	App();
 	int Go();
@@ -47,18 +52,19 @@ private:
 	void showFramesOf(vector<std::shared_ptr<Cell>> cells);
 	void makeComboCubes();
 	void openFile();
-	shared_ptr<Surface> buildSurface(std::shared_ptr<DrawableCell> c1, std::shared_ptr<DrawableCell> c2, std::shared_ptr<DrawableCell> c3);
-	//std::shared_ptr<CubeCell> getPickedItem2(int mouseX, int mouseY, int screenWidth, int screenHeight);
-	//void sample(float mouseX, float mouseY, int screenWidth, int screenHeight);
+	shared_ptr<Surface> buildSurface(std::shared_ptr<Cell> c1, std::shared_ptr<Cell> c2, std::shared_ptr<Cell> c3);
+
 private:
-	std::shared_ptr<DrawableCell> getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight);
+	std::shared_ptr<Cell> getPickedItem(int mouseX, int mouseY, int screenWidth, int screenHeight);
 	Camera camera;
 	std::shared_ptr<DataMiner> pMiner;
 	Window wnd;
 	ImguiManager imgui;
 	//char filename[1024] = "state_30x30x30.txt";
 	wstring filepath = L"100.txt";
-	std::shared_ptr<DrawableCell> picked;
-	vector<std::shared_ptr<DrawableCell>> pickedCells;
+	std::shared_ptr<Cell> picked;
+	vector<std::shared_ptr<Cell>> pickedCells;
+
 	void makeVisableCells();
+	void buildGrid(std::shared_ptr<DataMiner> pMiner);
 };

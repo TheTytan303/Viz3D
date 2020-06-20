@@ -186,6 +186,7 @@
     <ClInclude Include="Bindable.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Cell.h" />
+    <ClInclude Include="CellBase.h" />
     <ClInclude Include="ComboCube.h" />
     <ClInclude Include="CubeFrame.h" />
     <ClInclude Include="ConstantBuffer.h" />
@@ -197,8 +198,10 @@
     <ClInclude Include="DrawableCell.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
+    <ClInclude Include="Frame.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Grid.h" />
+    <ClInclude Include="GridBase.h" />
     <ClInclude Include="Hexal.h" />
     <ClInclude Include="HexalFrame.h" />
     <ClInclude Include="HexalGrid.h" />
