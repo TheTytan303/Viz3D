@@ -4,6 +4,9 @@
 #include "ConstantBuffer.h"
 #include "Graphics.h"
 #include "DrawableBase.h"
+
+#include "CubeFrame.h"
+
 #include <vector>
 #include <memory>
 #include <cstdlib>
@@ -103,6 +106,11 @@ public:
 			}
 		};
 		pColorBuffer->update(gfx, cb2);
+	};
+
+	std::shared_ptr<CubeFrame> getFrame(float red, float green, float blue, Graphics& gfx)
+	{
+		return std::make_shared<CubeFrame>(this->coords, red, blue, green, gfx);
 	};
 //--------------------=Virtuals=----------------
 	virtual float ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept = 0;

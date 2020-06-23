@@ -11,6 +11,8 @@
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 
+//Static init:
+bool Hexal::frameDrawing = true;
 
 Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx)
 	:
@@ -181,24 +183,12 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 	this->coords[0] = (float)x;
 	this->coords[1] = (float)y;
 	this->coords[2] = (float)z;
-	//if (x % 2 != 0)
-	//{
-	//	this->coords[2] += 0.5f;
-	//	this->coords[1] += 0.5f;
-	//}
 	if (y % 2 != 0)
 	{
 		this->coords[0] += 0.5f;
 		this->coords[2] += 0.5f;
 	}
-	//if (z % 2 != 0)
-	//{
-	//	this->coords[1] += 0.5f;
-	//	this->coords[0] += 0.5f;
-	//}
-	//this->coords[0] /= 2.0f;
 	this->coords[1] /= 2.0f;
-	//this->coords[2] /= 2.0f;
 	DrawableCell::size = 0.5f;
 	frame = std::make_shared<HexalFrame>(size,coords,0.0f,0.0f,0.0f,gfx);
 }
@@ -368,7 +358,7 @@ DirectX::XMMATRIX Hexal::GetTransformXM() const noexcept
 void Hexal::Draw(Graphics& gfx) const noexcept
 {
 	this->DrawableBase<Hexal>::Draw(gfx);
-	if (frame != nullptr)
+	if (frameDrawing && this->frame != nullptr)
 	{
 		frame->Draw(gfx);
 	}

@@ -90,6 +90,21 @@ CubeFrame::CubeFrame(
 	unsigned short x, unsigned short y, unsigned short z,
 	float red, float blue, float green,
 	 Graphics& gfx)
+	:
+	CubeFrame(
+		new float[3] {
+	(float)x - ((float)meshSize[0] / (float)2),
+	(float)y - ((float)meshSize[1] / (float)2),
+	(float)z - ((float)meshSize[1] / (float)2), },
+		red, blue, green,
+		gfx
+	){}
+CubeFrame::CubeFrame(
+	float* coords,
+	float red, float blue, float green,
+	Graphics& gfx)
+	:
+	DrawableFrame(size, coords, gfx)
 {
 	if (!isStaticInitialized()) {
 		struct Vertex {
@@ -156,14 +171,13 @@ CubeFrame::CubeFrame(
 	};
 	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
 	AddBind(std::make_unique<TransformCbuf>(gfx, *this));
-	this->coords[0] = x - (meshSize[0] / 2);
-	this->coords[1] = y - (meshSize[1] / 2);
-	this->coords[2] = z - (meshSize[1] / 2);
+	this->coords[0] = coords[0];
+	this->coords[1] = coords[1];
+	this->coords[2] = coords[2];
 }
-
-short* CubeFrame::getCoords() const
+float* CubeFrame::getCoords() const
 {
-	return (short*)coords;
+	return (float*)coords;
 }
 DirectX::XMMATRIX CubeFrame::GetTransformXM() const noexcept
 {

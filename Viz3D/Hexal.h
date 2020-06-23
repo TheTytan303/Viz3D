@@ -8,7 +8,11 @@
 
 class Hexal : public DrawableCell<Hexal>
 {
-//--------------------=Fields=----------------
+public:
+	//--------------------=Static=----------------
+	static bool frameDrawing;
+private:
+	//--------------------=Fields=----------------
 	std::shared_ptr<HexalFrame> frame;
 //--------------------=Methods=----------------
 public:

@@ -24,12 +24,180 @@ shared_ptr<CubeCell> makeCubeCell(unsigned short* size, std::shared_ptr<Cell> c,
 {
 	return std::make_shared<CubeCell>(size, c, gfx);
 }
-
 shared_ptr<Hexal> makeHexal(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
 {
 	return std::make_shared<Hexal>(size, c, gfx);
 }
 
+//Specyfic CellSetters
+shared_ptr<CellView> CubeCellSetter(shared_ptr<Cell> cell, GridBase* base)
+{
+	int x = cell.get()->getMeshCoords()[0];
+	int y = cell.get()->getMeshCoords()[1];
+	int z = cell.get()->getMeshCoords()[2];
+	shared_ptr<CellView> target = make_shared<CellView>();
+	target->cell = cell;
+	target->neighbours = 126u;
+
+	shared_ptr<CellView> tmp;
+
+	// X
+	//LEFT
+	tmp = base->getCellView(x - 1, y, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 64;
+		tmp->neighbours -= 32;
+	}
+	//RIGHT
+	tmp = base->getCellView(x + 1, y, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 32;
+		tmp->neighbours -= 64;
+	}
+
+	// Y
+	//BOTTOM
+	tmp = base->getCellView(x, y - 1, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 16;
+		tmp->neighbours -= 8;
+	}
+	//TOP
+	tmp = base->getCellView(x, y + 1, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 8;
+		tmp->neighbours -= 16;
+	}
+
+	// Z
+	//FRONT
+	tmp = base->getCellView(x, y, z - 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 4;
+		tmp->neighbours -= 2;
+	}
+	//BACK
+	tmp = base->getCellView(x, y, z + 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 2;
+		tmp->neighbours -= 4;
+	}
+	//cells[((int)x) + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)] = target;
+	return target;
+}
+shared_ptr<CellView> HexalSetter(shared_ptr<Cell> cell, GridBase* base)
+{
+	int x = cell.get()->getMeshCoords()[0];
+	int y = cell.get()->getMeshCoords()[1];
+	int z = cell.get()->getMeshCoords()[2];
+	shared_ptr<CellView> target = make_shared<CellView>();
+	target->cell = cell;
+	target->neighbours = 14u;
+
+	shared_ptr<CellView> tmp;
+
+	// góra
+	tmp = base->getCellView(x, y+2, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+
+	// góra - œrodek
+
+	tmp = base->getCellView(x - 1, y+1, z-1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x + 1, y+1, z+1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x+1, y+1, z - 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x-1, y+1, z + 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+
+	// œrodek
+	tmp = base->getCellView(x-1, y, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x+1, y, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x, y, z-1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x, y, z+1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+
+	//  dó³ - œrodek
+
+	tmp = base->getCellView(x - 1, y - 1, z - 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x + 1, y - 1, z + 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x + 1, y - 1, z - 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	tmp = base->getCellView(x - 1, y - 1, z + 1);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	// dó³
+	tmp = base->getCellView(x, y - 2, z);
+	if (tmp != nullptr)
+	{
+		target->neighbours -= 1;
+		tmp->neighbours -= 1;
+	}
+	return target;
+}
 
 
 
@@ -47,20 +215,9 @@ int App::Go()
 {
 
 	std::wstringstream wss;
-	wss << "C:\\Users\\wcies\\source\\repos\\Viz3D\\samples\\state_10x10x10.txt";
+	wss << "C:\\Users\\wcies\\source\\repos\\Viz3D\\samples\\p_10_20_10.txt";
 	filepath = wss.str();
 	mineData();
-
-	//unsigned short meshSize[3] = { 1,1,1 };
-	//std::vector<float> values;
-	//values.push_back(2.3f);
-	//std::shared_ptr<Cell> tmp_cell = std::make_shared<Cell>(1, 1, 1, 2, values);
-
-	//Hexal h(tmp_cell, wnd.Gfx());
-	//unique_ptr<Hexal> hexal = make_unique<Hexal>( tmp_cell,wnd.Gfx());
-	//hexals.push_back(std::move(hexal));
-	//unique_ptr<HexalFrame> hf = make_unique<HexalFrame>(meshSize, 1,1,1, 0,0,0,wnd.Gfx());
-	//hexalFrames.push_back(std::move(hf));
 
 
 	std::vector<float> v1 = {0,0,0};
@@ -115,14 +272,16 @@ int App::Go()
 				frames.clear();
 				if (!wnd.kbd.KeyIsPressed(VK_SHIFT))
 				{
-					pickedCells.clear();
+					grid->clearPickedCells();
 				}
-				picked = getPickedItem(e.GetPosX(), e.GetPosY(), 800, 600);
-				if( picked != nullptr)
-				{
-					pickedCells.push_back(picked);
-				}
-				ShowPickedFrame();
+				shared_ptr<Cell> picked = getPickedItem(e.GetPosX(), e.GetPosY(), 800, 600);
+				
+				//if( picked != nullptr)
+				//{
+				//	pickedCells.push_back(picked);
+				//}
+				//ShowPickedFrame();
+				vector<shared_ptr<Cell>> pickedCells = grid->getPickedCells();
 				if (pickedCells.size() > 2)
 				{
 					int last = (int)pickedCells.size();
@@ -204,8 +363,11 @@ int App::Go()
 
 void App::mineData() 
 {
-	picked = nullptr;
-	pickedCells.clear();
+	//picked = nullptr;
+	if (grid != nullptr)
+	{
+		grid->clearPickedCells();
+	}
 	surfaces.clear();
 	try 
 	{
@@ -265,32 +427,39 @@ void App::DoFrame()
 	for (auto& hs : hexalFrames) {
 		hs->Draw(wnd.Gfx());
 	}
-	if (grid != nullptr)
+	if (grid != nullptr )
 	{
 		grid->Draw(wnd.Gfx());
 	}
 	//*
 	if (show_gui_window)
 	{
-		if (picked != nullptr)
+		if (grid != nullptr)
 		{
-			if (ImGui::Begin("Picked Cell: "))
+			vector<shared_ptr<Cell>> pickedCells = grid->getPickedCells();
+			if (pickedCells.size() > 0)
 			{
-				ImGui::Text("Grain ID: %d", picked->getGrain());
-				ImGui::Text("coords: %d x %d x %d",
-					picked->getMeshCoords()[0],
-					picked->getMeshCoords()[1],
-					picked->getMeshCoords()[2]);
-				for(int i=0; i<CubeCell::getNames().size();i++)
+				if (ImGui::Begin("Picked Cells: "))
 				{
-					std::ostringstream oss;
-					oss << CubeCell::getNames().at(i);
-					oss << ": ";
-					oss << picked->getDetails().at(i);
-					ImGui::Text(oss.str().c_str());
+					for (int i = 0; i < pickedCells.size(); i++)
+					{
+						ImGui::Text("Grain ID: %d", pickedCells[i]->getGrain());
+						ImGui::Text("coords: %d x %d x %d",
+							pickedCells[i]->getMeshCoords()[0],
+							pickedCells[i]->getMeshCoords()[1],
+							pickedCells[i]->getMeshCoords()[2]);
+						for (int i = 0; i < CubeCell::getNames().size(); i++)
+						{
+							std::ostringstream oss;
+							oss << CubeCell::getNames().at(i);
+							oss << ": ";
+							oss << pickedCells[i]->getDetails().at(i);
+							ImGui::Text(oss.str().c_str());
+						}
+					}
 				}
+				ImGui::End();
 			}
-			ImGui::End();
 		}
 
 		if (ImGui::Begin("Input file"))
@@ -338,9 +507,18 @@ void App::DoFrame()
 			ImGui::RadioButton("Hexal", &cellType, 1);
 			if (ImGui::Button("Rebuild"))
 			{
-				buildGrid(pMiner);
-				makeVisableCells();
+				if (pMiner != nullptr)
+				{
+					buildGrid(pMiner);
+					makeVisableCells();
+				}
 			}
+		}
+		ImGui::End();
+
+		if (cellType == 1 && ImGui::Begin("HexalFrames"))
+		{
+			ImGui::Checkbox("Framing", &Hexal::frameDrawing);
 		}
 		ImGui::End();
 	}
@@ -352,7 +530,7 @@ void App::DoFrame()
 
 void App::ShowPickedFrame()
 {
-	unsigned short* tmp = pMiner->meshSize;
+	/*unsigned short* tmp = pMiner->meshSize;
 	for (int i = 0; i < pickedCells.size(); i++)
 	{
 		int x1 = pickedCells[i].get()->getMeshCoords()[0];
@@ -363,7 +541,7 @@ void App::ShowPickedFrame()
 				0.0f, 0.0f, 0.0f,
 				wnd.Gfx());
 		frames.push_back(std::move(ptr));
-	}
+	}*/
 }
 void App::showFramesOf(vector<std::shared_ptr<Cell>> cells)
 {
@@ -524,31 +702,31 @@ std::shared_ptr<Cell> App::getPickedItem(int mouseX, int mouseY, int screenWidth
 		DirectX::XMVectorGetX(rayDirection),
 		DirectX::XMVectorGetY(rayDirection),
 		DirectX::XMVectorGetZ(rayDirection), };
-	return grid->ifHit(rayOrigin, rayDirection);
+	return grid->pickCell(rayOrigin, rayDirection, wnd.Gfx());
 }
 
 
 //switching through celltypes:
-void App::makeVisableCells()
+void App::makeVisableCells() //rebuild
 {
 	switch (cellType)
 	{
 	case 0:
-		dynamic_cast<Grid<::CubeCell>*>(grid)->makeVisableCells(wnd.Gfx(), makeCubeCell);
+		dynamic_cast<Grid<::CubeCell, ::CubeFrame>*>(grid.get())->makeVisableCells(wnd.Gfx(), makeCubeCell);
 		break;
 	case 1:
-		dynamic_cast<Grid<::Hexal>*>(grid)->makeVisableCells(wnd.Gfx(), makeHexal);
+		dynamic_cast<Grid<::Hexal, ::HexalFrame>*>(grid.get())->makeVisableCells(wnd.Gfx(), makeHexal);
 	}
 }
 
-void App::buildGrid(std::shared_ptr<DataMiner> pMiner)
+void App::buildGrid(std::shared_ptr<DataMiner> pMiner) //initiazlization
 {
 	switch (cellType)
 	{
 	case 0:
-		grid = dynamic_cast<GridBase*>(new Grid<::CubeCell>(pMiner));
+		grid.reset(dynamic_cast<GridBase*>(new Grid<::CubeCell, ::CubeFrame>(pMiner, CubeCellSetter)));
 		break;
 	case 1:
-		grid = dynamic_cast<GridBase*>(new Grid<::Hexal>(pMiner));
+		grid.reset(dynamic_cast<GridBase*>(new Grid<::Hexal, ::HexalFrame>(pMiner, HexalSetter)));
 	}
 }

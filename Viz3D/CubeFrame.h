@@ -1,8 +1,7 @@
 #pragma once
-#pragma once
 #include "Cell.h"
 #include "Graphics.h"
-#include "DrawableBase.h"
+#include "DrawableFrame.h"
 #include <vector>
 #include <memory>
 #include <cstdlib>
@@ -10,12 +9,12 @@
 #include <string>
 #include <map>
 
-class CubeFrame : public DrawableBase<CubeFrame>
+class CubeFrame : public DrawableFrame<CubeFrame>
 {
 	//--------------------=Fields=----------------
 private:
 	static float size;			//4B
-	short coords[3];			//6B
+	float coords[3];			//6B
 	//18b / cell
 
 	//--------------------=Methods=----------------
@@ -23,6 +22,10 @@ public:
 	CubeFrame(
 		unsigned short* meshSize,
 		unsigned short x, unsigned short y, unsigned short z,
+		float red, float blue, float green,
+		Graphics& gfx);
+	CubeFrame(
+		float* coords,
 		float red, float blue, float green,
 		Graphics& gfx);
 	CubeFrame(CubeFrame& cell) = default;
@@ -33,7 +36,7 @@ public:
 
 
 	// Inherited via Cell
-	short* getCoords() const;
+	float* getCoords() const;
 
 	//Inharited via Drawable
 	DirectX::XMMATRIX GetTransformXM() const noexcept override;

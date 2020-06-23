@@ -320,13 +320,13 @@
     <ClInclude Include="Grid.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Frame.h">
-      <Filter>Core\Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="GridBase.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CellBase.h">
+      <Filter>Core\Header Files\Drawable</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawableFrame.h">
       <Filter>Core\Header Files\Drawable</Filter>
     </ClInclude>
   </ItemGroup>

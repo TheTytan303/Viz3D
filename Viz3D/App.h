@@ -17,11 +17,12 @@
 #include <vector>
 class App {
 
-	std::vector<std::shared_ptr<CubeCell>> cells; 
+	//std::vector<std::shared_ptr<CubeCell>> cells; 
 	//TODO: Multiple Grids 
 	//std::unique_ptr<GridBase> grid;
-	//std::shared_ptr<GridBase> grid;
-	GridBase* grid;
+	//std::vector<std::shared_ptr<GridBase>> grids;
+	shared_ptr<GridBase> grid;
+	//GridBase* grid;
 	std::vector<std::unique_ptr<CubeFrame>> frames;
 	std::vector<std::unique_ptr<Line>> lines;
 	std::vector<std::unique_ptr<Star>> stars;
@@ -62,8 +63,6 @@ private:
 	ImguiManager imgui;
 	//char filename[1024] = "state_30x30x30.txt";
 	wstring filepath = L"100.txt";
-	std::shared_ptr<Cell> picked;
-	vector<std::shared_ptr<Cell>> pickedCells;
 
 	void makeVisableCells();
 	void buildGrid(std::shared_ptr<DataMiner> pMiner);

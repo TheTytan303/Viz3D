@@ -6,27 +6,28 @@
 #include "GridBase.h"
 #include <memory>
 #include <DirectXMath.h>
+#include <type_traits>
 
 using namespace std;
-struct CellView
-{
-	shared_ptr<Cell> cell;
-	short neighbours;
-};
 struct Slices
 {
 	shared_ptr<Surface> s;
 	bool flag;
 };
 
-template<typename T>
+using namespace std;
+template<typename T, typename F>
 class Grid : public GridBase
 {
-	
 private:
 	shared_ptr<CellView>* cells;
 	vector<shared_ptr<T>> visibles;
-	vector<Slices> slices;	
+	
+	std::shared_ptr<Cell> picked;
+	vector<std::shared_ptr<Cell>> pickedCells;
+
+	vector<shared_ptr<CubeFrame>> frames;
+	vector<Slices> slices;
 	float* minis;
 	float* maxes;
 	unsigned short size[3];	// x,y,z
@@ -37,6 +38,10 @@ public:
 
 	Grid(std::shared_ptr<DataMiner> pDataMiner)
 	{
+		if (std::is_same<T, ::DrawableCell>::value != true)
+		{
+			throw "Need DrawableCell<T> extended class";
+		}
 		size[0] = pDataMiner->GetMeshSize()[0];
 		size[1] = pDataMiner->GetMeshSize()[1];
 		size[2] = pDataMiner->GetMeshSize()[2];
@@ -67,6 +72,46 @@ public:
 				}
 			}
 			setCell(tmp);
+		}
+	};
+	Grid(std::shared_ptr<DataMiner> pDataMiner,
+		shared_ptr<CellView>(*cellSetter)(shared_ptr<Cell> cell, GridBase* base))
+	{
+		if (std::is_same<T, ::DrawableCell<T>>::value)
+		{
+			throw "Need DrawableCell<T> extended class";
+		}
+		//TODO null DataMiner
+		size[0] = pDataMiner->GetMeshSize()[0];
+		size[1] = pDataMiner->GetMeshSize()[1];
+		size[2] = pDataMiner->GetMeshSize()[2];
+		const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+		this->cells = new shared_ptr<CellView>[count];
+		int values = (int)Cell::getNames().size();
+		minis = new float[values];
+		maxes = new float[values];
+		shared_ptr <Cell> tmp = pDataMiner->GetCellAt(0);
+		for (int i = 0; i < values; i++)
+		{
+			minis[i] = tmp->getDetails().at(i);
+			maxes[i] = tmp->getDetails().at(i);
+		}
+		setCellView(cellSetter(tmp, this));
+		for (int i = 1; i < count; i++)
+		{
+			tmp = pDataMiner->GetNextCell();
+			for (int i = 0; i < values; i++)
+			{
+				if (tmp->getDetails().at(i) > maxes[i])
+				{
+					maxes[i] = tmp->getDetails().at(i);
+				}
+				else if (tmp->getDetails().at(i) < minis[i])
+				{
+					minis[i] = tmp->getDetails().at(i);
+				}
+			}
+			setCellView(cellSetter(tmp, this));
 		}
 	};
 
@@ -163,14 +208,20 @@ public:
 			target->neighbours -= 2;
 			tmp->neighbours -= 4;
 		}
-
+		setCellView(target);
+	};
+	void setCellView(shared_ptr<CellView> target) override
+	{
+		int x = target->cell->getMeshCoords()[0];
+		int y = target->cell->getMeshCoords()[1];
+		int z = target->cell->getMeshCoords()[2];
 		cells[((int)x) + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)] = target;
 	};
 	vector<shared_ptr<T>> getVisableCells()
 	{
 		return visibles;
 	};
-	void makeVisableCells(Graphics& gfx, shared_ptr<T>(*cellMaker)(unsigned short* size, std::shared_ptr<Cell>, Graphics& gfx)) 
+	void makeVisableCells(Graphics& gfx, shared_ptr<T>(*cellMaker)(unsigned short* size, std::shared_ptr<Cell>, Graphics& gfx))
 	{
 		if (this == nullptr)
 			return;
@@ -191,7 +242,6 @@ public:
 			}
 		}
 	};
-
 
 	//Inharited via GridBase
 	void Slice(shared_ptr<Surface> s, bool side) override
@@ -248,7 +298,7 @@ public:
 			}
 		}
 		slices.erase(slices.end() - 1);
-	}; 
+	};
 	shared_ptr<Cell> ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction) override
 	{
 		if (this == nullptr)
@@ -298,6 +348,15 @@ public:
 		}
 	};
 
+	float* getWorldCoords(Cell& c) const override
+	{
+		float returnVale[3] = {0,0,0};
+		for (auto cell : visibles)
+		{
+			//TODO
+		}
+		return returnVale;
+	}
 	float* getMinis() override
 	{
 		float* returnVale = new float[sizeof(minis)];
@@ -322,7 +381,58 @@ public:
 		{
 			cell->Draw(Gfx);
 		}
+		for (auto frame : frames)
+		{
+			frame->Draw(Gfx);
+		}
 	};
+	virtual std::vector<std::shared_ptr<Cell>> getPickedCells() override
+	{
+		return pickedCells;
+	};
+	virtual void clearPickedCells() override
+	{
+		pickedCells.clear();
+		frames.clear();
+	};
+	virtual std::shared_ptr<Cell> pickCell(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, Graphics& gfx) override
+	{
+		if (this == nullptr)
+		{
+			return nullptr;
+		}
+		shared_ptr<T> returnVale;
+		float lastOne = 0.0f;
+		for (auto cell : visibles)
+		{
+			float hitDistance = cell->ifHit(origin, direction, 0);
+			if (hitDistance != 0)
+			{
+				if (lastOne == 0.0)
+				{
+					returnVale = cell;
+					lastOne = hitDistance;
+				}
+				else
+				{
+					if (lastOne > hitDistance)
+					{
+						returnVale = cell;
+						lastOne = hitDistance;
+					}
+				}
+			}
+		}
+		if (lastOne != 0.0f)
+		{
+			frames.push_back(returnVale->getFrame(0.0f, 0.0f, 0.0f, gfx));
+
+			pickedCells.push_back(std::dynamic_pointer_cast<Cell>(returnVale));
+			return std::dynamic_pointer_cast<Cell>(returnVale);
+		}
+		return nullptr;
+	};
+
 
 private:
 	vector<float> getColor(float max, float min, float val) {

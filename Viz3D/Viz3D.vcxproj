@@ -198,7 +198,7 @@
     <ClInclude Include="DrawableCell.h" />
     <ClInclude Include="dxerr.h" />
     <ClInclude Include="DxgiInfoManager.h" />
-    <ClInclude Include="Frame.h" />
+    <ClInclude Include="DrawableFrame.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="Grid.h" />
     <ClInclude Include="GridBase.h" />
