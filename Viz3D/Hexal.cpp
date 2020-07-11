@@ -155,17 +155,17 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 	{
 		DrawableBase<Hexal>::SetIndexFromStatic();
 	}
-	struct ConstantBuffer2
-	{
-		struct
-		{
-			float r;
-			float g;
-			float b;
-			float a;
-		}face_colors[1];
-	};
-	const ConstantBuffer2 cb2 =
+	//struct ConstantBuffer2
+	//{
+	//	struct
+	//	{
+	//		float r;
+	//		float g;
+	//		float b;
+	//		float a;
+	//	}face_colors[1];
+	//};
+	const ColorBuffer cb2 =
 	{
 		{
 			colors.at(grainID)->at(0),
@@ -174,7 +174,10 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 			1.0f
 		}
 	};
-	DrawableBase<Hexal>::AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
+	//DrawableBase<Hexal>::AddBind(std::make_unique<PixelConstantBuffer<ColorBuffer>>(gfx, cb2));
+	std::unique_ptr<PixelConstantBuffer<ColorBuffer>> tmp = std::make_unique<PixelConstantBuffer<ColorBuffer>>(gfx, cb2);
+	pColorBuffer = tmp.get();
+	AddBind(move(tmp));
 	DrawableBase<Hexal>::AddBind(std::make_unique<TransformCbuf>(gfx, *this));
 
 	int x = (meshCoords[0] - (meshSize[0] / 2));

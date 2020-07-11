@@ -8,6 +8,10 @@ TODO:
  - Kolory i skala(legenda) do graficznej interpretacji
  - wyszczególnianie ziarna
 
+ Update 11.07.2020 (bugFixes)
+ + naprawiono bug niepozwalający na wyświeltanie zmiennych dla HexCell
+ + przeniesiono domyślne implementacje wyglądu komórki (CubeCell)
+
  Update 23.06.2020 (Hexal refactor):
  + HexCell graficzna interpretacja zmiennych (Bugfix)
  + HexCell mousePicking

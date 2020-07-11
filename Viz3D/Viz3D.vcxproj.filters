@@ -153,9 +153,6 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Source Files\DXAPI</Filter>
     </ClCompile>
-    <ClCompile Include="Grid.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="App.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -300,9 +297,6 @@
       <Filter>Core\Header Files\Drawable\Cube</Filter>
     </ClInclude>
     <ClInclude Include="HexalFrame.h">
-      <Filter>Core\Header Files\Drawable\Hexal</Filter>
-    </ClInclude>
-    <ClInclude Include="HexalGrid.h">
       <Filter>Core\Header Files\Drawable\Hexal</Filter>
     </ClInclude>
     <ClInclude Include="DrawableCell.h">
