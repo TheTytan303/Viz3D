@@ -53,7 +53,8 @@ public:
 		const char* GetType() const noexcept override;
 	};
 
-	Graphics( HWND hWnd );
+	Graphics(HWND hWnd, unsigned int windowWidth, unsigned int windowHeight);
+	//Graphics(HWND hWnd);
 	Graphics(const Graphics&) = delete;
 	Graphics& operator=(const Graphics&) = delete;
 	~Graphics() = default;

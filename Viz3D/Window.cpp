@@ -63,7 +63,7 @@ Window::Window(int width, int height, LPCWSTR name) noexcept
 	//GUI:
 	ImGui::CreateContext();
 	ImGui_ImplWin32_Init(hWnd);
-	pGfx = std::make_unique<Graphics>(hWnd);
+	pGfx = std::make_unique<Graphics>(hWnd, width,height);
 }
 Window::~Window() {
 	ImGui_ImplWin32_Shutdown();

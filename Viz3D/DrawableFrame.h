@@ -20,7 +20,8 @@ public:
 
 	short* getCoords() const
 	{
-		return new short[3] = { coords[0],coords[1],coords[2] };
+		//return new short[3] = { coords[0],coords[1],coords[2] };
+		return coords;
 	}
 	short* getsize() const
 	{

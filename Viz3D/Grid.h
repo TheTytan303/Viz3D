@@ -40,26 +40,31 @@ public:
 		:
 		Grid(pDataMiner,CubeCellSetter)
 	{
-		/*
-		if (std::is_same<T, ::DrawableCell>::value != true)
+	};
+	Grid(std::shared_ptr<DataMiner> pDataMiner,
+		shared_ptr<CellView>(*cellSetter)(shared_ptr<Cell> cell, GridBase* base))
+	{
+		if (std::is_same<T, ::DrawableCell<T>>::value)
 		{
 			throw "Need DrawableCell<T> extended class";
 		}
+
+		//TODO null DataMiner
 		size[0] = pDataMiner->GetMeshSize()[0];
 		size[1] = pDataMiner->GetMeshSize()[1];
 		size[2] = pDataMiner->GetMeshSize()[2];
 		const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-		this->cells = new shared_ptr<CellView>[count];
+		this->cells = DEBUG_NEW shared_ptr<CellView>[count];
 		int values = (int)Cell::getNames().size();
-		minis = new float[values];
-		maxes = new float[values];
+		minis = DEBUG_NEW float[values];
+		maxes = DEBUG_NEW float[values];
 		shared_ptr <Cell> tmp = pDataMiner->GetCellAt(0);
 		for (int i = 0; i < values; i++)
 		{
 			minis[i] = tmp->getDetails().at(i);
 			maxes[i] = tmp->getDetails().at(i);
 		}
-		setCell(tmp);
+		setCellView(cellSetter(tmp, this));
 		for (int i = 1; i < count; i++)
 		{
 			tmp = pDataMiner->GetNextCell();
@@ -74,62 +79,20 @@ public:
 					minis[i] = tmp->getDetails().at(i);
 				}
 			}
-			setCell(tmp);
+			setCellView(cellSetter(tmp, this));
 		}
-		*/
 	};
-	Grid(std::shared_ptr<DataMiner> pDataMiner,
-		shared_ptr<CellView>(*cellSetter)(shared_ptr<Cell> cell, GridBase* base))
-			{
-				if (std::is_same<T, ::DrawableCell<T>>::value)
-				{
-					throw "Need DrawableCell<T> extended class";
-				}
-
-
-
-
-
-				//TODO null DataMiner
-				size[0] = pDataMiner->GetMeshSize()[0];
-				size[1] = pDataMiner->GetMeshSize()[1];
-				size[2] = pDataMiner->GetMeshSize()[2];
-				const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-				this->cells = new shared_ptr<CellView>[count];
-				int values = (int)Cell::getNames().size();
-				minis = new float[values];
-				maxes = new float[values];
-				shared_ptr <Cell> tmp = pDataMiner->GetCellAt(0);
-				for (int i = 0; i < values; i++)
-				{
-					minis[i] = tmp->getDetails().at(i);
-					maxes[i] = tmp->getDetails().at(i);
-				}
-				setCellView(cellSetter(tmp, this));
-				for (int i = 1; i < count; i++)
-				{
-					tmp = pDataMiner->GetNextCell();
-					for (int i = 0; i < values; i++)
-					{
-						if (tmp->getDetails().at(i) > maxes[i])
-						{
-							maxes[i] = tmp->getDetails().at(i);
-						}
-						else if (tmp->getDetails().at(i) < minis[i])
-						{
-							minis[i] = tmp->getDetails().at(i);
-						}
-					}
-					setCellView(cellSetter(tmp, this));
-				}
-			};
-
 	~Grid()
-			{
-				delete[] cells;
-				delete[] minis;
-				delete[] maxes;
-			};
+	{
+		//delete[] cells;
+		const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+		for (int i = 0; i < count; i++)
+		{
+			cells[i] = nullptr;
+		}
+		delete[] minis;
+		delete[] maxes;
+	};
 
 
 	//---------------Methods---------------
@@ -231,26 +194,26 @@ public:
 				return visibles;
 			};
 	void makeVisableCells(Graphics& gfx, shared_ptr<T>(*cellMaker)(unsigned short* size, std::shared_ptr<Cell>, Graphics& gfx))
+	{
+		if (this == nullptr)
+			return;
+		visibles.clear();
+		int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+		for (int i = 0; i < count; i++)
+		{
+			if (cells[i] != nullptr)
 			{
-				if (this == nullptr)
-					return;
-				visibles.clear();
-				int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-				for (int i = 0; i < count; i++)
+				if (outOfBounds(cells[i]->cell))
 				{
-					if (cells[i] != nullptr)
-					{
-						if (outOfBounds(cells[i]->cell))
-						{
-							continue;
-						}
-						if (cells[i]->neighbours != 0)
-						{
-							visibles.push_back(move(cellMaker(size, cells[i]->cell, gfx)));
-						}
-					}
+					continue;
 				}
-			};
+				if (cells[i]->neighbours != 0)
+				{
+					visibles.push_back(move(cellMaker(size, cells[i]->cell, gfx)));
+				}
+			}
+		}
+	};
 	void makeVisableCells(Graphics& gfx)
 	{
 		this->makeVisableCells(gfx, makeCubeCell);
@@ -258,60 +221,60 @@ public:
 
 	//Inharited via GridBase
 	void Slice(shared_ptr<Surface> s, bool side) override
+	{
+		slices.push_back(
 			{
-				slices.push_back(
-					{
-						s,
-						side
-					}
-				);
-				int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-				for (int i = 0; i < count; i++)
+				s,
+				side
+			}
+		);
+		int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+		for (int i = 0; i < count; i++)
+		{
+			if (cells[i] == nullptr)
+			{
+				continue;
+			}
+			float tmp = s->onSurface(
 				{
-					if (cells[i] == nullptr)
-					{
-						continue;
-					}
-					float tmp = s->onSurface(
-						{
-							(float)cells[i]->cell->getMeshCoords()[0],
-							(float)cells[i]->cell->getMeshCoords()[1],
-							(float)cells[i]->cell->getMeshCoords()[2],
-						}
-					);
-					if (tmp < 1.0f && tmp > -1)
-					{
-						cells[i]->neighbours += 128;
-					}
+					(float)cells[i]->cell->getMeshCoords()[0],
+					(float)cells[i]->cell->getMeshCoords()[1],
+					(float)cells[i]->cell->getMeshCoords()[2],
 				}
-			};
+			);
+			if (tmp < 1.0f && tmp > -1)
+			{
+				cells[i]->neighbours += 128;
+			}
+		}
+	};
 	void deSlice() override
+	{
+		if (slices.size() == 0)
+		{
+			return;
+		}
+		int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+		for (int i = 0; i < count; i++)
+		{
+			if (cells[i] == nullptr)
 			{
-				if (slices.size() == 0)
+				continue;
+			}
+			float tmp = slices.at(slices.size() - 1).s->onSurface(
 				{
-					return;
+					(float)cells[i]->cell->getMeshCoords()[0],
+					(float)cells[i]->cell->getMeshCoords()[1],
+					(float)cells[i]->cell->getMeshCoords()[2],
 				}
-				int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-				for (int i = 0; i < count; i++)
-				{
-					if (cells[i] == nullptr)
-					{
-						continue;
-					}
-					float tmp = slices.at(slices.size() - 1).s->onSurface(
-						{
-							(float)cells[i]->cell->getMeshCoords()[0],
-							(float)cells[i]->cell->getMeshCoords()[1],
-							(float)cells[i]->cell->getMeshCoords()[2],
-						}
-					);
-					if (tmp < 1.0f && tmp > -1)
-					{
-						cells[i]->neighbours -= 128;
-					}
-				}
-				slices.erase(slices.end() - 1);
-			};
+			);
+			if (tmp < 1.0f && tmp > -1)
+			{
+				cells[i]->neighbours -= 128;
+			}
+		}
+		slices.erase(slices.end() - 1);
+	};
 	shared_ptr<Cell> ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction) override
 			{
 				if (this == nullptr)
@@ -371,23 +334,25 @@ public:
 				return returnVale;
 			}
 	float* getMinis() override
-			{
-				float* returnVale = new float[sizeof(minis)];
-				for (int i = 0; i < sizeof(minis); i++)
-				{
-					returnVale[i] = minis[i];
-				}
-				return returnVale;
-			};
+	{
+		//float* returnVale = new float[sizeof(minis)];
+		//for (int i = 0; i < sizeof(minis); i++)
+		//{
+		//	returnVale[i] = minis[i];
+		//}
+		//return returnVale;
+		return minis;
+	};
 	float* getMaxes() override
-			{
-				float* returnVale = new float[sizeof(maxes)];
-				for (int i = 0; i < sizeof(maxes); i++)
-				{
-					returnVale[i] = maxes[i];
-				}
-				return returnVale;
-			};
+	{
+		//float* returnVale = new float[sizeof(maxes)];
+		//for (int i = 0; i < sizeof(maxes); i++)
+		//{
+		//	returnVale[i] = maxes[i];
+		//}
+		//return returnVale;
+		return maxes;
+	};
 	void Draw(Graphics& Gfx)override
 			{
 				for (auto cell : visibles)

@@ -165,9 +165,6 @@
     <ClCompile Include="HexalFrame.cpp">
       <Filter>Core\Source Files\Drawable\Hexal</Filter>
     </ClCompile>
-    <ClCompile Include="DrawableCell.cpp">
-      <Filter>Core\Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ComboCube.cpp">
       <Filter>Core\Source Files\Drawable\Cube</Filter>
     </ClCompile>
@@ -185,6 +182,9 @@
     </ClCompile>
     <ClCompile Include="Surface.cpp">
       <Filter>Core\Source Files\Drawable</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorPicker.cpp">
+      <Filter>Core\Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -323,6 +323,12 @@
     <ClInclude Include="DrawableFrame.h">
       <Filter>Core\Header Files\Drawable</Filter>
     </ClInclude>
+    <ClInclude Include="ColorPicker.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileConsumer.h">
+      <Filter>Core\Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="VertexShader.hlsl">
@@ -337,5 +343,9 @@
     <FxCompile Include="ComboCubeVertexShader.hlsl">
       <Filter>Header Files\Shaders</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

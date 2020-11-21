@@ -20,13 +20,13 @@ std::vector<std::string> Cell::valuesNames = {};
 
 unsigned short* Cell::getMeshCoords() const
 {
-	int n = sizeof(meshCoords);
-	unsigned short* returnVale = new unsigned short[n];
-	for (int i = 0; i < n; i++)
-	{
-		returnVale[i] = meshCoords[i];
-	}
-	return returnVale;
+	//int n = sizeof(meshCoords);
+	//unsigned short* returnVale = DEBUG_NEW unsigned short[n];
+	//for (int i = 0; i < n; i++)
+	//{
+	//	returnVale[i] = meshCoords[i];
+	//}
+	return meshCoords;
 }
 
 int Cell::getGrain() const
@@ -44,6 +44,7 @@ Cell::Cell(unsigned short x, unsigned short y, unsigned short z, int grainID, st
 	grainID(grainID),
 	values(values)
 {
+	meshCoords = DEBUG_NEW unsigned short[3];
 	meshCoords[0] = x;
 	meshCoords[1] = y;
 	meshCoords[2] = z;
@@ -54,6 +55,7 @@ Cell::Cell(Cell& cell)
 	grainID(cell.grainID),
 	values(cell.values)
 {
+	meshCoords = DEBUG_NEW unsigned short[3];
 	meshCoords[0] = cell.meshCoords[0];
 	meshCoords[1] = cell.meshCoords[1];
 	meshCoords[2] = cell.meshCoords[2];
@@ -64,7 +66,14 @@ Cell::Cell(std::shared_ptr<Cell> cell)
 	grainID(cell->grainID),
 	values(cell->values)
 {
+	meshCoords = DEBUG_NEW unsigned short[3];
 	meshCoords[0] = cell->meshCoords[0];
 	meshCoords[1] = cell->meshCoords[1];
 	meshCoords[2] = cell->meshCoords[2];
+}
+
+Cell::~Cell()
+{
+	delete [] meshCoords;
+	//values.clear();
 }

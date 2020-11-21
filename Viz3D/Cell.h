@@ -2,6 +2,15 @@
 #include <vector>
 #include <string>
 #include <memory>
+
+#ifdef _DEBUG
+#define DEBUG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+//#define new DEBUG_NEW
+#else
+#define DBG_NEW new
+#endif
 /*
 	Reprezentacja komórki :
 	getMeshCoords - zwraca wspó³rzêdne tej komórki w ca³ej strukturze, zwróci tablicê 3x unsigned short
@@ -34,7 +43,7 @@ public:
 	static void setNames(std::vector<std::string> names) noexcept;
 
 protected:
-	unsigned short meshCoords[3]; //parametrize
+	unsigned short* meshCoords; //parametrize
 	int grainID;
 	std::vector<float> values;
 
@@ -49,4 +58,5 @@ public:
 	Cell(Cell& cell);
 	Cell(std::shared_ptr<Cell> cell);
 
+	~Cell();
 };

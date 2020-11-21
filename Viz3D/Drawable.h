@@ -1,6 +1,7 @@
 #pragma once
 #include "Graphics.h"
 #include "IndexBuffer.h"
+#include "ConstantBuffer.h"
 #include <DirectXMath.h>
 #include <memory>
 #include <vector>
@@ -17,10 +18,16 @@ public:
 	virtual void Draw(Graphics& gfx) const noexcept;
 	void AddBind(std::unique_ptr<Bindable> bind) noexcept;
 	void AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept;
-	virtual ~Drawable() = default;
+	
+	//template<class T>
+	//void AddColorBuffer(std::unique_ptr<class PixelConstantBuffer<T> cbuf) noexcept;
+
+
+	virtual ~Drawable() = default; //TODO: check
 private:
 	virtual const std::vector<std::unique_ptr<Bindable>>& GetStaticBinds() const noexcept = 0;
 
 	const class IndexBuffer* pIndexBuffer = nullptr;
+	//ConstantBuffer<ColorBuffer>* pColorBuffer;
 	std::vector<std::unique_ptr<Bindable>> binds;
 };

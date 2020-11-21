@@ -1,4 +1,11 @@
 #pragma once
+
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
+
+
 #include "Window.h"
 #include "CubeCell.h"
 #include "CubeFrame.h"
@@ -12,6 +19,7 @@
 #include "GridBase.h"
 #include "ImGuiManager.h"
 #include "DataMiner.h"
+#include "ColorPicker.h"
 #include "Camera.h"
 #include <memory>
 #include <vector>
@@ -21,7 +29,7 @@ class App {
 	//TODO: Multiple Grids 
 	//std::unique_ptr<GridBase> grid;
 	//std::vector<std::shared_ptr<GridBase>> grids;
-	shared_ptr<GridBase> grid;
+	unique_ptr<GridBase> grid;
 	//GridBase* grid;
 	std::vector<std::unique_ptr<CubeFrame>> frames;
 	std::vector<std::unique_ptr<Line>> lines;
@@ -36,6 +44,8 @@ class App {
 	int cX = 0;
 	int cY = 0;
 	int cellType=0;
+	unsigned int windowWidth = 800;
+	unsigned int windowHeight = 600;
 	enum CellType {
 		CubeCell,
 		Hexal
@@ -52,7 +62,8 @@ private:
 	void ShowPickedFrame();
 	void showFramesOf(vector<std::shared_ptr<Cell>> cells);
 	void makeComboCubes();
-	void openFile();
+	void openDataFile();
+	void openColorFile();
 	shared_ptr<Surface> buildSurface(std::shared_ptr<Cell> c1, std::shared_ptr<Cell> c2, std::shared_ptr<Cell> c3);
 
 private:
@@ -62,7 +73,7 @@ private:
 	Window wnd;
 	ImguiManager imgui;
 	//char filename[1024] = "state_30x30x30.txt";
-	wstring filepath = L"100.txt";
+	wstring filepath = L"C:\\Users\\wcies\\source\\repos\\Viz3D\\samples\\state_10x10x10.txt";
 
 	void makeVisableCells();
 	void buildGrid(std::shared_ptr<DataMiner> pMiner);

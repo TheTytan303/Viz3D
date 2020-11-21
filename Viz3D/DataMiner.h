@@ -5,14 +5,10 @@
 #include <map>
 #include <memory>
 #include "CubeCell.h"
+#include "FileConsumer.h"
 
 /*
-	Za³adowanie ca³ego (30 MB danych) pliku do pamiêci mog³oby byæ ma³o wydajne, wiêc
-	klasa DataMiner otwiera plik podany w konstruktorze i pozwala:
 
-	przeczytaæ rozmiar siatki i nazwy komórek 
-	przeczytaæ komórkê w danej linijce pliku - GetCellAt(int index); 
-	przeczytaæ komórkê w kolejnej linijce pliku - GetNextCell(int index); (szybsze od GetCellAt() je¿eli chcemy przeczytaæ parê komórek obok siebie)
 */
 
 class DataMiner

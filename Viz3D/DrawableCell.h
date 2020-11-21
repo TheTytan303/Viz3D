@@ -68,16 +68,19 @@ public:
 
 //--------------------=Fields=----------------
 protected:
-	float coords[3];
+	//std::vector<float> coords;
+	float* coords;
+	//std::shared_ptr<ConstantBuffer<ColorBuffer>> pColorBuffer;
 	ConstantBuffer<ColorBuffer>* pColorBuffer;
 
 //--------------------=Methods=-----------------
 public:
-	DrawableCell(Cell cell)
+	DrawableCell(std::shared_ptr<Cell> cell)
 		:
 		Cell(cell)
 	{
-		DrawableCell::initGrain(cell.getGrain());
+		coords = DEBUG_NEW float[3];
+		DrawableCell::initGrain(cell->getGrain());
 	};
 	void setColor(std::vector<float> color, Graphics& gfx)
 	{
@@ -114,8 +117,15 @@ public:
 	};
 //--------------------=Virtuals=----------------
 	virtual float ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float dist) const noexcept = 0;
-	virtual float* getCoords() const = 0;
-	//virtual
+	virtual float* getCoords()
+	{
+		return coords;
+	};
+	~DrawableCell()
+	{
+		pColorBuffer = nullptr;
+		delete[] coords;
+	}
 };
 
 template<typename T>

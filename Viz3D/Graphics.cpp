@@ -15,7 +15,7 @@
 
 namespace dx = DirectX;
 
-Graphics::Graphics(HWND hWnd)
+Graphics::Graphics(HWND hWnd, unsigned int windowWidth, unsigned int windowHeight)
 {
 	DXGI_SWAP_CHAIN_DESC sd = {};
 		sd.BufferDesc.Width = 0;
@@ -72,8 +72,8 @@ Graphics::Graphics(HWND hWnd)
 
 	wrl::ComPtr<ID3D11Texture2D> pDepthStencil;
 	D3D11_TEXTURE2D_DESC descDepth = {};
-	descDepth.Width = 800u;
-	descDepth.Height = 600u;
+	descDepth.Width = windowWidth;
+	descDepth.Height = windowHeight;
 	descDepth.MipLevels = 1u;
 	descDepth.ArraySize = 1u;
 	descDepth.Format = DXGI_FORMAT_D32_FLOAT;
@@ -93,8 +93,8 @@ Graphics::Graphics(HWND hWnd)
 	pContext->OMSetRenderTargets(1u,pTarget.GetAddressOf(),pDSV.Get());
 
 	D3D11_VIEWPORT vp;
-	vp.Width = 800;
-	vp.Height = 600;
+	vp.Width = windowWidth;
+	vp.Height = windowHeight;
 	vp.MinDepth = 0;
 	vp.MaxDepth = 1.0f;
 	vp.TopLeftX = 0;
@@ -229,218 +229,3 @@ const char* Graphics::DeviceRemovedException::GetType() const noexcept {
 	return "Graphics exception - Device removed";
 }
 
-
-//TMP
-/*
-void Graphics::DrawTestTriangle(float angleX, float angleY, float x, float y)
-{
-	HRESULT hr;
-	//INFOMAN(this);
-	struct Vertex {
-		struct {
-			float x;
-			float y;
-			float z;
-		} pos;
-	};
-	std::vector<Vertex> vertices =
-	{
-		{-1.0f,-1.0f,-1.0f},
-		{ 1.0f,-1.0f,-1.0f},
-		{ 1.0f, 1.0f,-1.0f},
-		{-1.0f, 1.0f,-1.0f},
-		{-1.0f,-1.0f, 1.0f},
-		{ 1.0f,-1.0f, 1.0f},
-		{-1.0f, 1.0f, 1.0f},
-		{ 1.0f, 1.0f, 1.0f},
-	};
-	namespace wrl = Microsoft::WRL;
-	wrl::ComPtr<ID3D11Buffer> pVertexBuffer;
-
-	D3D11_BUFFER_DESC bufferDesc = {};
-	bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	bufferDesc.CPUAccessFlags = 0u;
-	bufferDesc.MiscFlags = 0u;
-	bufferDesc.ByteWidth = sizeof(vertices) ;
-	bufferDesc.StructureByteStride = sizeof(Vertex);
-	bufferDesc.ByteWidth = UINT(sizeof(Vertex) * vertices.size()) ;
-	D3D11_SUBRESOURCE_DATA sResourceData = {};
-	sResourceData.pSysMem = vertices.data();
-	pDevice->CreateBuffer(&bufferDesc, &sResourceData, &pVertexBuffer);
-	
-
-	//Bind vertex Buffer to pipeline
-	const UINT stride = sizeof(Cell::Vertex);
-	const UINT offset = 0u;
-	pContext->IASetVertexBuffers(
-		0u, 1u,
-		pVertexBuffer.GetAddressOf(),
-		&stride, &offset
-	);
-	
-	
-	
-	
-	
-	const std::vector<unsigned short> indecies=
-	{
-		0,2,1, 2,3,1,	//back
-		1,3,5, 3,7,5,	//right
-		2,6,3, 3,6,7,	//top
-		4,5,7, 4,7,6,	//front
-		0,4,2, 2,4,6,	//left
-		0,1,4, 1,5,4,	//bottom
-	};
-
-	wrl::ComPtr<ID3D11Buffer> pIndexBuffer;
-	D3D11_BUFFER_DESC indexBufferDesc = {};
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.CPUAccessFlags = 0u;
-	indexBufferDesc.MiscFlags = 0u;
-	indexBufferDesc.ByteWidth = UINT(indecies.size() * sizeof(unsigned short));
-	indexBufferDesc.StructureByteStride = sizeof(unsigned short);
-	D3D11_SUBRESOURCE_DATA indexsd = {};
-	indexsd.pSysMem = indecies.data();
-	pDevice->CreateBuffer(&indexBufferDesc, &indexsd, &pIndexBuffer);
-
-	//bind index buffer
-	pContext->IASetIndexBuffer(pIndexBuffer.Get(), DXGI_FORMAT_R16_UINT, 0u);
-
-
-	//constant buffer for transformation Matrix
-	struct ConstantBuffer
-	{
-		dx::XMMATRIX transform;
-	};
-
-	const ConstantBuffer cb =
-	{
-		{
-			dx::XMMatrixTranspose(
-				dx::XMMatrixRotationZ(0) *
-				dx::XMMatrixRotationY(0) *
-				dx::XMMatrixTranslation(1,1,4.0f)*
-				dx::XMMatrixPerspectiveLH(1.0f,3.0f / 4.0f,0.5f,10.0f)
-				*projection
-			)
-		}
-	};
-
-	wrl::ComPtr<ID3D11Buffer> pConstantBuffer;
-	D3D11_BUFFER_DESC cbd;
-	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd.Usage = D3D11_USAGE_DYNAMIC;
-	cbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	cbd.MiscFlags = 0u;
-	cbd.ByteWidth = sizeof(cb);
-	cbd.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd = {};
-	csd.pSysMem = &cb;
-	pDevice->CreateBuffer(&cbd, &csd, &pConstantBuffer);
-
-	//bind matrix buffer to shader
-	pContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
-
-
-
-
-
-
-	struct ConstantBuffer2
-	{
-		struct
-		{
-			float r;
-			float g;
-			float b;
-			float a;
-		}face_colors[1];
-	};
-	const ConstantBuffer2 cb2 =
-	{
-		{
-			{1.0f, 1.0f, 1.0f, 1.0f},
-		}
-	};
-
-	wrl::ComPtr<ID3D11Buffer> pConstantBuffer2;
-	D3D11_BUFFER_DESC cbd2;
-	cbd2.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	cbd2.Usage = D3D11_USAGE_DEFAULT;
-	cbd2.CPUAccessFlags = 0u;
-	cbd2.MiscFlags = 0u;
-	cbd2.ByteWidth = sizeof(cb2);
-	cbd2.StructureByteStride = 0u;
-	D3D11_SUBRESOURCE_DATA csd2 = {};
-	csd2.pSysMem = &cb2;
-	pDevice->CreateBuffer(&cbd2, &csd2, &pConstantBuffer2);
-
-	//bind colorbuffer to pixel shader
-	pContext->PSSetConstantBuffers(0, 1, pConstantBuffer2.GetAddressOf());
-
-
-	wrl::ComPtr<ID3DBlob>  pBlob;
-	//create pixel shader
-	wrl::ComPtr<ID3D11PixelShader> pPixelShader;
-	D3DReadFileToBlob(L"PixelShader.cso", &pBlob);
-	pDevice->CreatePixelShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pPixelShader);
-
-	//bind pixel shader
-	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0u);
-
-	//create vertex shader
-	wrl::ComPtr<ID3D11VertexShader> pVertexShader;
-	D3DReadFileToBlob(L"VertexShader.cso", &pBlob);
-	pDevice->CreateVertexShader(pBlob->GetBufferPointer(), pBlob->GetBufferSize(), nullptr, &pVertexShader);
-
-	//Bind vertex shader
-	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
-
-	// input layout
-	wrl::ComPtr<ID3D11InputLayout> pInputLayout;
-	const D3D11_INPUT_ELEMENT_DESC ied[] =
-	{
-		{"Position",0,DXGI_FORMAT_R32G32B32_FLOAT,0,0,D3D11_INPUT_PER_VERTEX_DATA,0}
-	};
-
-
-	pDevice->CreateInputLayout(
-		ied, (UINT)std::size(ied),
-		pBlob->GetBufferPointer(),
-		pBlob->GetBufferSize(),
-		&pInputLayout
-	);
-
-	//bind vertex lauot
-	pContext->IASetInputLayout(pInputLayout.Get());
-
-
-	//Set primitive topology to triangle list (vertices)
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//Configure ViewPort
-	//D3D11_VIEWPORT vp;
-	//vp.Width = 800;
-	//vp.Height = 600;
-	//vp.MinDepth = 0;
-	//vp.MaxDepth = 1;
-	//vp.TopLeftX = 0;
-	//vp.TopLeftY = 0;
-	//pContext->RSSetViewports(1u, &vp);
-
-
-	//index buffer:
-	//const unsigned short triangles[] = {
-	//	0,1,2,
-	//	3,0,
-	//
-	//
-	//};
-
-	//pContext->Draw((UINT)std::size(vertices), 0u);
-	//pContext->DrawIndexed(triangles,,0u)
-	pContext->DrawIndexed((UINT)std::size(indecies), 0u, 0u);
-}
-//*/

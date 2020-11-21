@@ -11,9 +11,10 @@
 #include <memory>
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
-
 //--------------------=non-Static=----------------
 
+//Static init:
+bool CubeCell::frameDrawing = false;
 CubeCell::CubeCell(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx)
 	:
 	DrawableCell(cell)
@@ -88,6 +89,11 @@ CubeCell::CubeCell(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphic
 	this->coords[0] =(float)(meshCoords[0] - (meshSize[0] / 2));
 	this->coords[1] =(float)(meshCoords[1] - (meshSize[1] / 2));
 	this->coords[2] =(float)(meshCoords[2] - (meshSize[2] / 2));
+
+	frame = std::make_shared<CubeFrame>(
+		coords,
+		0.0f, 0.0f, 0.0f,
+		gfx);
 }
 
 std::shared_ptr<std::vector<float>> CubeCell::getColor()
@@ -147,16 +153,6 @@ float CubeCell::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, flo
 	return returnVale;
 }
 
-
-float* CubeCell::getCoords() const
-{
-	float* returnVale = new float[3];
-	returnVale[0] = (float)coords[0];
-	returnVale[1] = (float)coords[1];
-	returnVale[2] = (float)coords[2];
-	return returnVale;
-}
-
 DirectX::XMMATRIX CubeCell::GetTransformXM() const noexcept
 {
 	return
@@ -167,3 +163,11 @@ DirectX::XMMATRIX CubeCell::GetTransformXM() const noexcept
 		DirectX::XMMatrixTranslation((float)coords[0], (float)coords[1], (float)coords[2])
 	;
 };
+void CubeCell::Draw(Graphics& gfx) const noexcept
+{
+	this->DrawableBase<CubeCell>::Draw(gfx);
+	if (frameDrawing && this->frame != nullptr)
+	{
+		frame->Draw(gfx);
+	}
+}

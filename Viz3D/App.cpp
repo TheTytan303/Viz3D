@@ -1,3 +1,12 @@
+#ifdef _DEBUG
+#define DEBUG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+// Replace _NORMAL_BLOCK with _CLIENT_BLOCK if you want the
+// allocations to be of _CLIENT_BLOCK type
+//#define new DEBUG_NEW
+#else
+#define DBG_NEW new
+#endif
+
 #include "App.h"
 #include <sstream>
 #include "CubeCell.h"
@@ -8,16 +17,15 @@
 
 #include <DirectXMath.h>
 
-
 #include <Wininet.h>
 #include <ShlObj.h>
 #include <iostream>
-#include <cstdlib>
 #include <stdlib.h>
 #include <ctime>
 #include <vector>
 #include <string>
 #include <memory>
+
 
 //Specific CellMakers:
 /*
@@ -209,7 +217,7 @@ shared_ptr<CellView> HexalSetter(shared_ptr<Cell> cell, GridBase* base)
 
 App::App()
 	:
-	wnd(800, 600, L"App window")
+	wnd(windowWidth, windowHeight, L"App window")
 {
 
 	wnd.Gfx().setProjection(DirectX::XMMatrixPerspectiveLH(1.0f, 3.0f / 4.0f, 0.5f, 200.0f));
@@ -220,9 +228,10 @@ int licznik = 0;
 int App::Go()
 {
 
-	std::wstringstream wss;
-	wss << "C:\\Users\\wcies\\source\\repos\\Viz3D\\samples\\state_10x10x10.txt";
-	filepath = wss.str();
+	//std::wstringstream wss;
+	//wss << "C:\\Users\\wcies\\source\\repos\\Viz3D\\samples\\state_10x10x10.txt";
+	//filepath = wss.str();
+
 	mineData();
 
 
@@ -230,6 +239,7 @@ int App::Go()
 	stars.push_back(std::make_unique<Star>(v1, 1.0f, 1.0f, 0.0f, wnd.Gfx()));
 	MSG msg;
 	BOOL gResult;
+	//_CrtDumpMemoryLeaks();
 	while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
 		TranslateMessage(&msg);
 		DispatchMessage(&msg);
@@ -364,6 +374,10 @@ int App::Go()
 		}
 		DoFrame();
 	}
+
+	grid.reset();
+	//Sleep(5000);
+	_CrtDumpMemoryLeaks();
 	return (int)msg.wParam;
 }
 
@@ -507,9 +521,13 @@ void App::DoFrame()
 
 		if (ImGui::Begin("Input file"))
 		{
-			if (ImGui::Button("pickFile"))
+			if (ImGui::Button("pickDataFile"))
 			{
-				openFile();
+				openDataFile();
+			}
+			if (ImGui::Button("pickColorFile"))
+			{
+				openColorFile();
 			}
 		}
 		ImGui::End();
@@ -530,11 +548,19 @@ void App::DoFrame()
 		}
 		ImGui::End();
 
-		if (cellType == 1 && ImGui::Begin("HexalFrames"))
+		if (ImGui::Begin("Framing"))
 		{
-			ImGui::Checkbox("Framing", &Hexal::frameDrawing);
+			switch (cellType)
+			{
+			case 0:
+				ImGui::Checkbox("BasicFrames", &CubeCell::frameDrawing);
+				break;
+			case 1:
+				ImGui::Checkbox("BasicFrames", &Hexal::frameDrawing);
+			}
+			
 		}
-		if(cellType ==1 ) ImGui::End();
+		ImGui::End();
 	}
 	//*/
 	//ImGui::Render();
@@ -573,7 +599,7 @@ void App::showFramesOf(vector<std::shared_ptr<Cell>> cells)
 	}
 
 }
-void App::openFile()
+void App::openDataFile()
 {
 	IFileDialog* dialog = NULL;
 	HRESULT hr = CoCreateInstance(
@@ -625,6 +651,54 @@ void App::openFile()
 								//filepath = oss.str();
 								//wcstombs(filename, pszFilePath, wcslen(pszFilePath));
 								//strncpy_s(filename, filepath.c_str(), sizeof(filepath.c_str()) - 1);
+							}
+							psiResult->Release();
+						}
+					}
+				}
+			}
+		}
+		dialog->Release();
+	}
+}
+void App::openColorFile()
+{
+	IFileDialog* dialog = NULL;
+	HRESULT hr = CoCreateInstance(
+		CLSID_FileOpenDialog,
+		NULL,
+		CLSCTX_INPROC_SERVER,
+		IID_PPV_ARGS(&dialog));
+	if (SUCCEEDED(hr))
+	{
+
+		DWORD dwFlags;
+		hr = dialog->GetOptions(&dwFlags);
+		if (SUCCEEDED(hr))
+		{
+			hr = dialog->SetOptions(dwFlags | FOS_FORCEFILESYSTEM);
+			if (SUCCEEDED(hr))
+			{
+				hr = dialog->SetDefaultExtension(L"txt;csv");
+				if (SUCCEEDED(hr))
+				{
+					hr = dialog->Show(NULL);
+					if (SUCCEEDED(hr))
+					{
+						IShellItem* psiResult;
+						hr = dialog->GetResult(&psiResult);
+						if (SUCCEEDED(hr))
+						{
+							PWSTR pszFilePath = NULL;
+							hr = psiResult->GetDisplayName(SIGDN_FILESYSPATH,
+								&pszFilePath);
+							if (SUCCEEDED(hr))
+							{
+								std::wstringstream wss;
+								wss << pszFilePath;
+								wstring path = wss.str();
+								ColorPicker colorPicker(path);
+								colorPicker.loadColors();
 							}
 							psiResult->Release();
 						}
@@ -726,7 +800,6 @@ void App::makeVisableCells() //rebuild
 	switch (cellType)
 	{
 	case 0:
-		//dynamic_cast<Grid<::CubeCell, ::CubeFrame>*>(grid.get())->makeVisableCells(wnd.Gfx(), Grid<::CubeCell, ::CubeFrame>::makeCubeCell);
 		dynamic_cast<Grid<::CubeCell, ::CubeFrame>*>(grid.get())->makeVisableCells(wnd.Gfx()); //default making CubeCell (Moore neighbour)
 		break;
 	case 1:
@@ -736,14 +809,16 @@ void App::makeVisableCells() //rebuild
 
 void App::buildGrid(std::shared_ptr<DataMiner> pMiner) //initiazlization
 {
+	grid.release();
 	switch (cellType)
 	{
 	case 0:
-		//grid.reset(dynamic_cast<GridBase*>(new Grid<::CubeCell, ::CubeFrame>(pMiner, CubeCellSetter)));
-		//grid.reset(dynamic_cast<GridBase*>(new Grid<::CubeCell, ::CubeFrame>(pMiner, Grid<::CubeCell, ::CubeFrame>::CubeCellSetter)));
-		grid.reset(dynamic_cast<GridBase*>(new Grid<::CubeCell, ::CubeFrame>(pMiner))); //default making CubeCell (Moore neighbour)
+		grid.reset(dynamic_cast<GridBase*>(DEBUG_NEW Grid<::CubeCell, ::CubeFrame>(pMiner))); //default making CubeCell (Moore neighbour)
+		//grid.release();
+		//grid = make_unique<>
+		
 		break;
 	case 1:
-		grid.reset(dynamic_cast<GridBase*>(new Grid<::Hexal, ::HexalFrame>(pMiner, HexalSetter)));
+		grid.reset(dynamic_cast<GridBase*>(DEBUG_NEW Grid<::Hexal, ::HexalFrame>(pMiner, HexalSetter)));
 	}
 }

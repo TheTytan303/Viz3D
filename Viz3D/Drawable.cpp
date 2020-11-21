@@ -25,3 +25,10 @@ void Drawable::AddIndexBuffer(std::unique_ptr<class IndexBuffer> ibuf) noexcept
 	pIndexBuffer = ibuf.get();
 	binds.push_back(std::move(ibuf));
 }
+
+//void Drawable::AddColorBuffer(std::unique_ptr<class PixelConstantBuffer> cbuf) noexcept
+//{
+//	assert("attepmt of adding color buffer a second time" && pPixelConstantBuffer == nullptr);
+//	pPixelConstantBuffer = cbuf.get();
+//	binds.push_back(std::move(cbuf));
+//}

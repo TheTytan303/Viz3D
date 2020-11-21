@@ -50,6 +50,7 @@ public:
 		GFX_THROW_INFO(GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pConstantBuffer));
 		//GetDevice(gfx)->CreateBuffer(&cbd, nullptr, &pConstantBuffer);
 	}
+
 };
 template<typename T>
 class VertexConstantBuffer : public ConstantBuffer<T>
@@ -63,6 +64,7 @@ public:
 		GetContext(gfx)->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
 	}
 };
+
 template<typename T>
 class PixelConstantBuffer : public ConstantBuffer<T>
 {
@@ -73,6 +75,5 @@ public:
 	void Bind(Graphics& gfx) noexcept override
 	{
 		GetContext(gfx)->PSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
-
 	}
 };

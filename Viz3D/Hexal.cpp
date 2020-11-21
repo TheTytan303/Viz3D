@@ -155,16 +155,7 @@ Hexal::Hexal(unsigned short* meshSize, std::shared_ptr<Cell> cell, Graphics& gfx
 	{
 		DrawableBase<Hexal>::SetIndexFromStatic();
 	}
-	//struct ConstantBuffer2
-	//{
-	//	struct
-	//	{
-	//		float r;
-	//		float g;
-	//		float b;
-	//		float a;
-	//	}face_colors[1];
-	//};
+
 	const ColorBuffer cb2 =
 	{
 		{
@@ -334,15 +325,6 @@ float Hexal::ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction, float 
 		}
 	}
 	//*/
-	return returnVale;
-}
-
-float* Hexal::getCoords() const
-{
-	float* returnVale = new float[3];
-	returnVale[0] = (float)coords[0];
-	returnVale[1] = (float)coords[1];
-	returnVale[2] = (float)coords[2];
 	return returnVale;
 }
 

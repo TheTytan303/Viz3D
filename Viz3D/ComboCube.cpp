@@ -23,28 +23,6 @@ ComboCube::ComboCube(unsigned short* meshSize, std::vector<std::shared_ptr<CubeC
 
 
 	if (!isStaticInitialized()) {
-
-		//struct Vertex {
-		//	struct {
-		//		float x;
-		//		float y;
-		//		float z;
-		//	} pos;
-		//};
-		//std::vector<Vertex> vertices =
-		//{
-		//	{-1.0f,-1.0f,-1.0f},
-		//	{ 1.0f,-1.0f,-1.0f},
-		//	{-1.0f, 1.0f,-1.0f},
-		//	{ 1.0f, 1.0f,-1.0f},
-		//	{-1.0f,-1.0f, 1.0f},
-		//	{ 1.0f,-1.0f, 1.0f},
-		//	{-1.0f, 1.0f, 1.0f},
-		//	{ 1.0f, 1.0f, 1.0f},
-		//};
-		//AddStaticBind(std::make_unique<VertexBuffer>(gfx, vertices));
-
-
 		const std::vector<unsigned short> indecies =
 		{
 			0,2,1, 2,3,1,	//back
@@ -57,8 +35,6 @@ ComboCube::ComboCube(unsigned short* meshSize, std::vector<std::shared_ptr<CubeC
 		AddStaticIndexBuffer(std::make_unique<IndexBuffer>(gfx, indecies));
 
 		AddStaticBind(std::make_unique<PixelShader>(gfx, L"ComboCubePixelShader.cso"));
-		//AddStaticBind(std::make_unique<PixelShader>(gfx, L"PixelShader.cso"));
-		//auto pvs = std::make_unique<VertexShader>(gfx, L"ComboCubeVertexShader.cso");
 		auto pvs = std::make_unique<VertexShader>(gfx, L"ComboCubeVertexShader.cso");
 		auto pvsbc = pvs->GetBytecode();
 		AddStaticBind(std::move(pvs));
@@ -76,63 +52,6 @@ ComboCube::ComboCube(unsigned short* meshSize, std::vector<std::shared_ptr<CubeC
 	{
 		SetIndexFromStatic();
 	}
-	//struct ConstantBuffer2
-	//{
-	//	struct
-	//	{
-	//		float r;
-	//		float g;
-	//		float b;
-	//	}vertex_colors[8];
-	//};
-	/*
-	const ConstantBuffer2 cb2 =
-	{
-		{
-			{
-			subCells[0]->getColor()->at(0),
-			subCells[0]->getColor()->at(1),
-			subCells[0]->getColor()->at(2),
-			},
-			{
-			subCells[1]->getColor()->at(0),
-			subCells[1]->getColor()->at(1),
-			subCells[1]->getColor()->at(2),
-			},
-			{
-			subCells[2]->getColor()->at(0),
-			subCells[2]->getColor()->at(1),
-			subCells[2]->getColor()->at(2),
-			},
-			{
-			subCells[3]->getColor()->at(0),
-			subCells[3]->getColor()->at(1),
-			subCells[3]->getColor()->at(2),
-			},
-			{
-			subCells[4]->getColor()->at(0),
-			subCells[4]->getColor()->at(1),
-			subCells[4]->getColor()->at(2),
-			},
-			{
-			subCells[5]->getColor()->at(0),
-			subCells[5]->getColor()->at(1),
-			subCells[5]->getColor()->at(2),
-			},
-			{
-			subCells[6]->getColor()->at(0),
-			subCells[6]->getColor()->at(1),
-			subCells[6]->getColor()->at(2),
-			},
-			{
-			subCells[7]->getColor()->at(0),
-			subCells[7]->getColor()->at(1),
-			subCells[7]->getColor()->at(2),
-			},
-		}
-	};
-	AddBind(std::make_unique<PixelConstantBuffer<ConstantBuffer2>>(gfx, cb2));
-	*/
 	///*
 	struct Vertex
 	{

@@ -92,7 +92,7 @@ CubeFrame::CubeFrame(
 	 Graphics& gfx)
 	:
 	CubeFrame(
-		new float[3] {
+		DEBUG_NEW float[3] {
 	(float)x - ((float)meshSize[0] / (float)2),
 	(float)y - ((float)meshSize[1] / (float)2),
 	(float)z - ((float)meshSize[1] / (float)2), },
