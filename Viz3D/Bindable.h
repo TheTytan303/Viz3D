@@ -1,10 +1,5 @@
 #pragma once
 #include "Graphics.h"
-//#include "macros.h"
-//#include "DxgiInfoManager.h"
-//#include <DirectXMath.h>
-//#include <memory>
-//#include <vector>
 class Bindable
 {
 public:

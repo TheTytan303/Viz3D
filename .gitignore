@@ -260,3 +260,4 @@ paket-files/
 __pycache__/
 *.pyc
 /samples/Model_16ziaren_250x250x250.txt
+*.txt

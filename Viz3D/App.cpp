@@ -28,83 +28,12 @@
 
 
 //Specific CellMakers:
-/*
-//defaultly implemented in Grid.h
-shared_ptr<CubeCell> makeCubeCell(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
-{
-	return std::make_shared<CubeCell>(size, c, gfx);
-}
-*/
 shared_ptr<Hexal> makeHexal(unsigned short* size, std::shared_ptr<Cell> c, Graphics& gfx)
 {
 	return std::make_shared<Hexal>(size, c, gfx);
 }
 
 //Specyfic CellSetters
-/*
-//defaultly implemented in Grid.h
-shared_ptr<CellView> CubeCellSetter(shared_ptr<Cell> cell, GridBase* base)
-{
-	int x = cell.get()->getMeshCoords()[0];
-	int y = cell.get()->getMeshCoords()[1];
-	int z = cell.get()->getMeshCoords()[2];
-	shared_ptr<CellView> target = make_shared<CellView>();
-	target->cell = cell;
-	target->neighbours = 126u;
-
-	shared_ptr<CellView> tmp;
-
-	// X
-	//LEFT
-	tmp = base->getCellView(x - 1, y, z);
-	if (tmp != nullptr)
-	{
-		target->neighbours -= 64;
-		tmp->neighbours -= 32;
-	}
-	//RIGHT
-	tmp = base->getCellView(x + 1, y, z);
-	if (tmp != nullptr)
-	{
-		target->neighbours -= 32;
-		tmp->neighbours -= 64;
-	}
-
-	// Y
-	//BOTTOM
-	tmp = base->getCellView(x, y - 1, z);
-	if (tmp != nullptr)
-	{
-		target->neighbours -= 16;
-		tmp->neighbours -= 8;
-	}
-	//TOP
-	tmp = base->getCellView(x, y + 1, z);
-	if (tmp != nullptr)
-	{
-		target->neighbours -= 8;
-		tmp->neighbours -= 16;
-	}
-
-	// Z
-	//FRONT
-	tmp = base->getCellView(x, y, z - 1);
-	if (tmp != nullptr)
-	{
-		target->neighbours -= 4;
-		tmp->neighbours -= 2;
-	}
-	//BACK
-	tmp = base->getCellView(x, y, z + 1);
-	if (tmp != nullptr)
-	{
-		target->neighbours -= 2;
-		tmp->neighbours -= 4;
-	}
-	//cells[((int)x) + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)] = target;
-	return target;
-}
-*/
 shared_ptr<CellView> HexalSetter(shared_ptr<Cell> cell, GridBase* base)
 {
 	int x = cell.get()->getMeshCoords()[0];
@@ -464,24 +393,27 @@ void App::DoFrame()
 				int count = (int)Cell::getNames().size();
 				if (count != 0)
 				{
-					ImGui::Text("variables range:");
+
+					if (ImGui::Button("Show grains"))
+					{
+						grid->resetColors(wnd.Gfx());
+					}
+					ImGui::Text("variables");
 					for (int i = 0; i < count; i++)
 					{
-						if (ImGui::Button(Cell::getNames().at(i).c_str()))
+						std::ostringstream oss;
+						oss << Cell::getNames().at(i);
+						oss << "(";
+						oss << grid->getMinis()[i] << " - ";
+						oss << grid->getMaxes()[i];
+						oss << ")";
+						//ImGui::Text(oss.str().c_str());
+						if (ImGui::Button(oss.str().c_str()))
 						{
 							grid->showVariable(i, wnd.Gfx());
 							ImGui::SameLine();
 						}
-						std::ostringstream oss;
 						//oss << Cell::getNames().at(i) << ": ";
-						oss << "range" << ": ";
-						oss << grid->getMinis()[i] << " - ";
-						oss << grid->getMaxes()[i];
-						ImGui::Text(oss.str().c_str());
-					}
-					if (ImGui::Button("Show grains"))
-					{
-						grid->resetColors(wnd.Gfx());
 					}
 				}
 				else
@@ -489,6 +421,7 @@ void App::DoFrame()
 					ImGui::Text("no variables specified");
 				}
 			}
+			ImGui::End();
 			
 			
 			vector<shared_ptr<Cell>> pickedCells = grid->getPickedCells();
@@ -519,7 +452,7 @@ void App::DoFrame()
 
 		}
 
-		if (ImGui::Begin("Input file"))
+		if (ImGui::Begin("Input files"))
 		{
 			if (ImGui::Button("pickDataFile"))
 			{
@@ -530,7 +463,6 @@ void App::DoFrame()
 				openColorFile();
 			}
 		}
-		ImGui::End();
 		ImGui::End();
 
 		if (ImGui::Begin("Celling Type"))
@@ -697,8 +629,12 @@ void App::openColorFile()
 								std::wstringstream wss;
 								wss << pszFilePath;
 								wstring path = wss.str();
-								ColorPicker colorPicker(path);
-								colorPicker.loadColors();
+								shared_ptr<ColorPicker> colorPicker = make_shared<ColorPicker>(path);
+								colorPicker->loadColors();
+
+								//ColorPicker colorPicker(path);
+								//colorPicker.loadColors();
+								makeVisableCells();
 							}
 							psiResult->Release();
 						}
@@ -813,12 +749,9 @@ void App::buildGrid(std::shared_ptr<DataMiner> pMiner) //initiazlization
 	switch (cellType)
 	{
 	case 0:
-		grid.reset(dynamic_cast<GridBase*>(DEBUG_NEW Grid<::CubeCell, ::CubeFrame>(pMiner))); //default making CubeCell (Moore neighbour)
-		//grid.release();
-		//grid = make_unique<>
-		
+		grid.reset(dynamic_cast<GridBase*>(new Grid<::CubeCell, ::CubeFrame>(pMiner))); //default making CubeCell (Moore neighbour)
 		break;
 	case 1:
-		grid.reset(dynamic_cast<GridBase*>(DEBUG_NEW Grid<::Hexal, ::HexalFrame>(pMiner, HexalSetter)));
+		grid.reset(dynamic_cast<GridBase*>(new Grid<::Hexal, ::HexalFrame>(pMiner, HexalSetter)));
 	}
 }

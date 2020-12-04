@@ -1,10 +1,4 @@
 #include "HexalFrame.h"
-#include "VertexShader.h"
-#include "PixelShader.h"
-#include "VertexBuffer.h"
-#include "Topology.h"
-#include "InputLayout.h"
-#include "TransformCbuf.h"
 
 
 HexalFrame::HexalFrame(
@@ -13,6 +7,8 @@ HexalFrame::HexalFrame(
 	unsigned short x, unsigned short y, unsigned short z,
 	float red, float blue, float green,
 	Graphics& gfx)
+	:
+	DrawableFrame(size, coords, gfx)
 {
 	if (!isStaticInitialized()) {
 		struct Vertex {
@@ -185,6 +181,8 @@ HexalFrame::HexalFrame(
 	float coords[3],
 	float red, float blue, float green,
 	Graphics& gfx)
+	:
+	DrawableFrame(size, coords, gfx)
 {
 	if (!isStaticInitialized()) {
 		struct Vertex {

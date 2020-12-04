@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <ctime>
 #include "ColorPicker.h"
-#include "DrawableCell.h"
 
 ColorPicker::ColorPicker(const char* fileName)
 {
@@ -32,6 +31,11 @@ ColorPicker::ColorPicker(const std::wstring fileName)
 	return;
 };
 
+ColorPicker::~ColorPicker() noexcept
+{
+
+}
+
 bool ColorPicker::loadNextColor()
 {
 	unsigned short r, g, b, grainID;
@@ -48,6 +52,7 @@ bool ColorPicker::loadNextColor()
 	colors.push_back(static_cast <float> (g) / static_cast <float> (255));
 	colors.push_back(static_cast <float> (b) / static_cast <float> (255));
 	DrawableCell<CubeCell>::setColor(grainID, colors);
+	DrawableCell<Hexal>::setColor(grainID, colors);//todo
 	return true;
 }
 

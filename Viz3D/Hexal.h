@@ -1,7 +1,5 @@
 #pragma once
 #include "HexalFrame.h"
-#include "ConstantBuffer.h"
-#include "Graphics.h"
 #include "DrawableCell.h"
 #include <memory>
 

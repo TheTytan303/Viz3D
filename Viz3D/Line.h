@@ -1,5 +1,4 @@
 #pragma once
-#include "Graphics.h"
 #include "DrawableBase.h"
 #include <vector>
 #include <memory>

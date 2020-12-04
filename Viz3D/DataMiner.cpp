@@ -31,7 +31,7 @@ DataMiner::DataMiner(const char* fileName)
 	{
 		valuesNames.erase(valuesNames.begin());
 	}
-	CubeCell::setNames(valuesNames);
+	Cell::setNames(valuesNames);
 }
 DataMiner::DataMiner(const std::string fileName)
 	:
@@ -68,7 +68,7 @@ DataMiner::DataMiner(const std::wstring fileName)
 	{
 		valuesNames.erase(valuesNames.begin());
 	}
-	CubeCell::setNames(valuesNames);
+	Cell::setNames(valuesNames);
 }
 
 DataMiner::~DataMiner() noexcept

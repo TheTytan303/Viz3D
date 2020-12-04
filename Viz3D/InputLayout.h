@@ -1,5 +1,4 @@
 #pragma once
-#include "Graphics.h"
 #include "Bindable.h"
 
 class InputLayout : public Bindable

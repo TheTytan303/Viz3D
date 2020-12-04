@@ -11,6 +11,13 @@
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 
+//#define bok = 0.66f
+//#define a  0.33f // po³owa d³ugoœci boku
+//#define b  0.9333809512f // przek¹tna (kwadratów)
+//#define c  0.4666904756f // po³owa przek¹tnej (kwadratów)
+//#define d  0.6587731819f
+
+
 //Static init:
 bool Hexal::frameDrawing = true;
 

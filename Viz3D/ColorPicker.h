@@ -4,7 +4,9 @@
 #include <string>
 #include <map>
 #include <memory>
+
 #include "CubeCell.h"
+#include "Hexal.h"
 
 class ColorPicker
 {

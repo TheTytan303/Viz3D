@@ -4,8 +4,7 @@
 #include <string>
 #include <map>
 #include <memory>
-#include "CubeCell.h"
-#include "FileConsumer.h"
+#include "Cell.h"
 
 /*
 

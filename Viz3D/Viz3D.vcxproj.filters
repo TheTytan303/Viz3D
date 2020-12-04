@@ -317,16 +317,10 @@
     <ClInclude Include="GridBase.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CellBase.h">
-      <Filter>Core\Header Files\Drawable</Filter>
-    </ClInclude>
     <ClInclude Include="DrawableFrame.h">
       <Filter>Core\Header Files\Drawable</Filter>
     </ClInclude>
     <ClInclude Include="ColorPicker.h">
-      <Filter>Core\Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FileConsumer.h">
       <Filter>Core\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -346,6 +340,5 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
 </Project>

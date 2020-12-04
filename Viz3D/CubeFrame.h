@@ -1,7 +1,11 @@
 #pragma once
-#include "Cell.h"
-#include "Graphics.h"
+
 #include "DrawableFrame.h"
+#include <cstdlib>
+#include <ctime>
+#include <memory>
+#include <DirectXMath.h>
+#include <DirectXCollision.h>
 #include <vector>
 #include <memory>
 #include <cstdlib>

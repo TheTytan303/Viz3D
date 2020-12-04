@@ -1,6 +1,6 @@
 #pragma once
 #include "DrawableBase.h"
-#include "Graphics.h"
+
 template<typename T>
 class DrawableFrame : public DrawableBase<T>
 {

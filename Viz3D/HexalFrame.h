@@ -1,17 +1,12 @@
 #pragma once
 #include "ConstantBuffer.h"
-#include "Cell.h"
-#include "Graphics.h"
-#include "DrawableBase.h"
+#include "DrawableFrame.h"
 
 
-class HexalFrame : public DrawableBase<HexalFrame>
+class HexalFrame : public DrawableFrame<HexalFrame>
 {
 
-	//--------------------=Fields=----------------
-private:
-	float size;			//4B
-	float coords[3];			//6B
+
 public:
 	HexalFrame(
 		float size,

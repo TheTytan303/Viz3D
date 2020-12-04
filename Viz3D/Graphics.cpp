@@ -1,7 +1,6 @@
 #include "Graphics.h"
 #include <d3dcompiler.h>
 #include "dxerr.h"
-#include "CubeCell.h"
 #include "Macros.h"
 
 #include "imgui_impl_dx11.h"

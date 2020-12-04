@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Cell.h"
-#include "ConstantBuffer.h"
 #include "Graphics.h"
 #include "DrawableBase.h"
 
@@ -19,7 +18,6 @@ class DrawableCell : public Cell, public DrawableBase<T>
 {
 //--------------------=Static=----------------
 protected:
-	static std::map<int, std::shared_ptr<std::vector<float>>> colors;
 public:
 	static std::shared_ptr<std::vector<float>> getColorOf(int grain) noexcept 
 	{
@@ -65,12 +63,11 @@ public:
 	};
 	static float size;
 	static float surfaceDistanceRendering;
+	static std::map<int, std::shared_ptr<std::vector<float>>> colors;
 
 //--------------------=Fields=----------------
 protected:
-	//std::vector<float> coords;
 	float* coords;
-	//std::shared_ptr<ConstantBuffer<ColorBuffer>> pColorBuffer;
 	ConstantBuffer<ColorBuffer>* pColorBuffer;
 
 //--------------------=Methods=-----------------
@@ -79,7 +76,7 @@ public:
 		:
 		Cell(cell)
 	{
-		coords = DEBUG_NEW float[3];
+		coords = new float[3];
 		DrawableCell::initGrain(cell->getGrain());
 	};
 	void setColor(std::vector<float> color, Graphics& gfx)
@@ -132,5 +129,4 @@ template<typename T>
 float DrawableCell<T>::size = 0.5f;
 
 template<typename T>
-
 std::map<int, std::shared_ptr<std::vector<float>>> DrawableCell<T>::colors = {};

@@ -1,18 +1,5 @@
 #include "CubeFrame.h"
 
-#include "Cell.h"
-#include "VertexShader.h"
-#include "PixelShader.h"
-#include "VertexBuffer.h"
-#include "Topology.h"
-#include "InputLayout.h"
-#include "TransformCbuf.h"
-#include <cstdlib>
-#include <ctime>
-#include <memory>
-#include <DirectXMath.h>
-#include <DirectXCollision.h>
-
 float CubeFrame::size = 0.5f;
 //--------------------=non-Static=----------------
 std::vector<DirectX::XMVECTOR> CubeFrame::GetTriangles() const noexcept
@@ -92,7 +79,7 @@ CubeFrame::CubeFrame(
 	 Graphics& gfx)
 	:
 	CubeFrame(
-		DEBUG_NEW float[3] {
+		new float[3] {
 	(float)x - ((float)meshSize[0] / (float)2),
 	(float)y - ((float)meshSize[1] / (float)2),
 	(float)z - ((float)meshSize[1] / (float)2), },

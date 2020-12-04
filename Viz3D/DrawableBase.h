@@ -1,7 +1,6 @@
 #pragma once
 #include "Drawable.h"
-#include "Bindable.h"
-#include "IndexBuffer.h"
+#include "TransformCbuf.h"
 #include <memory>
 #include <vector>
 template<typename T>

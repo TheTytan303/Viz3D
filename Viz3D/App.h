@@ -4,23 +4,16 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 
-
-
 #include "Window.h"
 #include "CubeCell.h"
-#include "CubeFrame.h"
 #include "Line.h"
 #include "Star.h"
 #include "Hexal.h"
-#include "HexalFrame.h"
 #include "Surface.h"
-#include "ComboCube.h"
 #include "Grid.h"
-#include "GridBase.h"
 #include "ImGuiManager.h"
 #include "DataMiner.h"
 #include "ColorPicker.h"
-#include "Camera.h"
 #include <memory>
 #include <vector>
 class App {
@@ -37,7 +30,6 @@ class App {
 	std::vector<std::shared_ptr<Surface>> surfaces;
 	std::vector<std::shared_ptr<Hexal>> hexals;
 	std::vector<std::shared_ptr<HexalFrame>> hexalFrames;
-	std::vector<std::shared_ptr<ComboCube>> comboCubes;
 	bool show_gui_window = true;
 	float pX = 0;
 	float pY = 0;
@@ -72,7 +64,6 @@ private:
 	std::shared_ptr<DataMiner> pMiner;
 	Window wnd;
 	ImguiManager imgui;
-	//char filename[1024] = "state_30x30x30.txt";
 	wstring filepath = L"C:\\Users\\wcies\\source\\repos\\Viz3D\\samples\\state_10x10x10.txt";
 
 	void makeVisableCells();

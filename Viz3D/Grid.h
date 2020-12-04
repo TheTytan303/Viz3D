@@ -20,7 +20,6 @@ template<typename T, typename F>
 class Grid : public GridBase
 {
 private:
-	shared_ptr<CellView>* cells;
 	vector<shared_ptr<T>> visibles;
 
 	std::shared_ptr<Cell> picked;
@@ -28,9 +27,6 @@ private:
 
 	vector<shared_ptr<CubeFrame>> frames;
 	vector<Slices> slices;
-	float* minis;
-	float* maxes;
-	unsigned short size[3];	// x,y,z
 	//unsigned short bounds[6]; // mesh: x,x,y,y,z,z
 	//vector<> surfaces;
 public:
@@ -43,43 +39,12 @@ public:
 	};
 	Grid(std::shared_ptr<DataMiner> pDataMiner,
 		shared_ptr<CellView>(*cellSetter)(shared_ptr<Cell> cell, GridBase* base))
+		:
+		GridBase(pDataMiner, cellSetter)
 	{
 		if (std::is_same<T, ::DrawableCell<T>>::value)
 		{
 			throw "Need DrawableCell<T> extended class";
-		}
-
-		//TODO null DataMiner
-		size[0] = pDataMiner->GetMeshSize()[0];
-		size[1] = pDataMiner->GetMeshSize()[1];
-		size[2] = pDataMiner->GetMeshSize()[2];
-		const int count = ((int)size[0] * (int)size[1] * (int)size[2]);
-		this->cells = DEBUG_NEW shared_ptr<CellView>[count];
-		int values = (int)Cell::getNames().size();
-		minis = DEBUG_NEW float[values];
-		maxes = DEBUG_NEW float[values];
-		shared_ptr <Cell> tmp = pDataMiner->GetCellAt(0);
-		for (int i = 0; i < values; i++)
-		{
-			minis[i] = tmp->getDetails().at(i);
-			maxes[i] = tmp->getDetails().at(i);
-		}
-		setCellView(cellSetter(tmp, this));
-		for (int i = 1; i < count; i++)
-		{
-			tmp = pDataMiner->GetNextCell();
-			for (int i = 0; i < values; i++)
-			{
-				if (tmp->getDetails().at(i) > maxes[i])
-				{
-					maxes[i] = tmp->getDetails().at(i);
-				}
-				else if (tmp->getDetails().at(i) < minis[i])
-				{
-					minis[i] = tmp->getDetails().at(i);
-				}
-			}
-			setCellView(cellSetter(tmp, this));
 		}
 	};
 	~Grid()
@@ -96,99 +61,7 @@ public:
 
 
 	//---------------Methods---------------
-	unsigned short* getSize()
-			{
-				return size;
-			}
-	shared_ptr<CellView> getCellView(unsigned short x, unsigned short y, unsigned short z)
-			{
-				if (x >= size[0] || y >= size[1] || z >= size[2] || x < 0 || y < 0 || z < 0)
-				{
-					return nullptr;
-				}
-				return cells[(int)x + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)];
-			};
-	shared_ptr<Cell> getCell(unsigned short x, unsigned short y, unsigned short z)
-			{
-				if (x >= size[0] || y >= size[1] || z >= size[2] || x < 0 || y < 0 || z < 0)
-				{
-					return nullptr;
-				}
-				return cells[(int)x + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)]->cell;
-			};
-	void setCell(shared_ptr<Cell> cell)
-			{
-				int x = cell.get()->getMeshCoords()[0];
-				int y = cell.get()->getMeshCoords()[1];
-				int z = cell.get()->getMeshCoords()[2];
-				shared_ptr<CellView> target = make_shared<CellView>();
-				target->cell = cell;
-				target->neighbours = 126u;
 
-				//Left Right Bottom Top Front Back
-				//LRTBFB
-
-				//1111110
-				//64 32 16 8 4 2 0
-
-				shared_ptr<CellView> tmp;
-
-				// X
-				//LEFT
-				tmp = getCellView(x - 1, y, z);
-				if (tmp != nullptr)
-				{
-					target->neighbours -= 64;
-					tmp->neighbours -= 32;
-				}
-				//RIGHT
-				tmp = getCellView(x + 1, y, z);
-				if (tmp != nullptr)
-				{
-					target->neighbours -= 32;
-					tmp->neighbours -= 64;
-				}
-
-				// Y
-				//BOTTOM
-				tmp = getCellView(x, y - 1, z);
-				if (tmp != nullptr)
-				{
-					target->neighbours -= 16;
-					tmp->neighbours -= 8;
-				}
-				//TOP
-				tmp = getCellView(x, y + 1, z);
-				if (tmp != nullptr)
-				{
-					target->neighbours -= 8;
-					tmp->neighbours -= 16;
-				}
-
-				// Z
-				//FRONT
-				tmp = getCellView(x, y, z - 1);
-				if (tmp != nullptr)
-				{
-					target->neighbours -= 4;
-					tmp->neighbours -= 2;
-				}
-				//BACK
-				tmp = getCellView(x, y, z + 1);
-				if (tmp != nullptr)
-				{
-					target->neighbours -= 2;
-					tmp->neighbours -= 4;
-				}
-				setCellView(target);
-			};
-	void setCellView(shared_ptr<CellView> target) override
-			{
-				int x = target->cell->getMeshCoords()[0];
-				int y = target->cell->getMeshCoords()[1];
-				int z = target->cell->getMeshCoords()[2];
-				cells[((int)x) + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)] = target;
-			};
 	vector<shared_ptr<T>> getVisableCells()
 			{
 				return visibles;
@@ -237,9 +110,9 @@ public:
 			}
 			float tmp = s->onSurface(
 				{
-					(float)cells[i]->cell->getMeshCoords()[0],
-					(float)cells[i]->cell->getMeshCoords()[1],
-					(float)cells[i]->cell->getMeshCoords()[2],
+					(float)this->cells[i]->cell->getMeshCoords()[0],
+					(float)this->cells[i]->cell->getMeshCoords()[1],
+					(float)this->cells[i]->cell->getMeshCoords()[2],
 				}
 			);
 			if (tmp < 1.0f && tmp > -1)
@@ -333,26 +206,6 @@ public:
 				}
 				return returnVale;
 			}
-	float* getMinis() override
-	{
-		//float* returnVale = new float[sizeof(minis)];
-		//for (int i = 0; i < sizeof(minis); i++)
-		//{
-		//	returnVale[i] = minis[i];
-		//}
-		//return returnVale;
-		return minis;
-	};
-	float* getMaxes() override
-	{
-		//float* returnVale = new float[sizeof(maxes)];
-		//for (int i = 0; i < sizeof(maxes); i++)
-		//{
-		//	returnVale[i] = maxes[i];
-		//}
-		//return returnVale;
-		return maxes;
-	};
 	void Draw(Graphics& Gfx)override
 			{
 				for (auto cell : visibles)
@@ -505,7 +358,6 @@ public:
 			target->neighbours -= 2;
 			tmp->neighbours -= 4;
 		}
-		//cells[((int)x) + ((int)size[0] * (int)y) + ((int)size[1] * (int)size[0] * (int)z)] = target;
 		return target;
 	}
 	//cell maker

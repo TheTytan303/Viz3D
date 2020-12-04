@@ -1,7 +1,5 @@
 #pragma once
-#include "Bindable.h"
 #include "Drawable.h"
-#include "ConstantBuffer.h"
 #include <DirectXMath.h>
 #include <memory>
 class TransformCbuf : public Bindable
