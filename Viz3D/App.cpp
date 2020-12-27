@@ -219,13 +219,8 @@ int App::Go()
 				{
 					grid->clearPickedCells();
 				}
-				shared_ptr<Cell> picked = getPickedItem(e.GetPosX(), e.GetPosY(), 800, 600);
-				
-				//if( picked != nullptr)
-				//{
-				//	pickedCells.push_back(picked);
-				//}
-				//ShowPickedFrame();
+				shared_ptr<Cell> picked = getPickedItem(e.GetPosX(), e.GetPosY(), windowWidth, windowHeight);
+
 				vector<shared_ptr<Cell>> pickedCells = grid->getPickedCells();
 				if (pickedCells.size() > 2)
 				{
@@ -356,7 +351,8 @@ void App::makeComboCubes()
 
 void App::DoFrame()
 {
-	wnd.Gfx().BeginFrame(0.1f, 0.9f, 0.9f);
+	//wnd.Gfx().BeginFrame(0.1f, 0.9f, 0.9f);
+	wnd.Gfx().BeginFrame(1.0f,1.0f, 1.0f);
 	wnd.Gfx().SetCamera(camera.getMatrix());
 	{
 	for (auto& f : frames) {
@@ -444,6 +440,15 @@ void App::DoFrame()
 							oss << pickedCells[i]->getDetails().at(j);
 							ImGui::Text(oss.str().c_str());
 						}
+						ImGui::Text("Picked grains: %d",
+							pickedGrains.size());
+						if (ImGui::Button("Add grain to visualise"))
+						{
+							if (!pickedGrains.count(pickedCells[i]->getGrain()))
+							{
+								pickedGrains[pickedCells[i]->getGrain()] = true;
+							}
+						}
 					}
 				}
 				ImGui::End();
@@ -493,6 +498,23 @@ void App::DoFrame()
 			
 		}
 		ImGui::End();
+
+		if (!pickedGrains.empty())
+		{
+			if (ImGui::Begin("Picked Grains:"))
+			{
+				for (auto& pickedGrain : pickedGrains)
+				{
+					int i = pickedGrain.first;
+					ImGui::Checkbox(to_string(pickedGrain.first).c_str(), &pickedGrain.second);
+				}
+				if (ImGui::Button("Visualise"))
+				{
+					makeVisableCells();
+				}
+			}
+			ImGui::End();
+		}
 	}
 	//*/
 	//ImGui::Render();
@@ -733,6 +755,15 @@ std::shared_ptr<Cell> App::getPickedItem(int mouseX, int mouseY, int screenWidth
 //switching through celltypes:
 void App::makeVisableCells() //rebuild
 {
+	grid->earsePickedGrains();
+	if (!pickedGrains.empty())
+	{
+		for (auto& pickedGrain : pickedGrains)
+		{
+			if (pickedGrain.second)
+				grid->addPickedGrain(pickedGrain.first);
+		}
+	}
 	switch (cellType)
 	{
 	case 0:
@@ -746,6 +777,7 @@ void App::makeVisableCells() //rebuild
 void App::buildGrid(std::shared_ptr<DataMiner> pMiner) //initiazlization
 {
 	grid.release();
+	pickedGrains.clear();
 	switch (cellType)
 	{
 	case 0:

@@ -160,6 +160,11 @@ public:
 
 	virtual void Slice(std::shared_ptr<Surface> s, bool side) = 0;
 	virtual void deSlice() = 0;
+
+	virtual void addPickedGrain(int grainID) = 0;
+	virtual void removePickedGrain(int grainID) = 0;
+	virtual void earsePickedGrains() = 0;
+
 	virtual std::shared_ptr<Cell> ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction) = 0;
 	
 	//virtual std::shared_ptr<CellView> getCellView(unsigned short x, unsigned short y, unsigned short z) = 0;

@@ -27,6 +27,7 @@ private:
 
 	vector<shared_ptr<CubeFrame>> frames;
 	vector<Slices> slices;
+	vector<int> pickedGrains;
 	//unsigned short bounds[6]; // mesh: x,x,y,y,z,z
 	//vector<> surfaces;
 public:
@@ -79,6 +80,13 @@ public:
 				if (outOfBounds(cells[i]->cell))
 				{
 					continue;
+				}
+				if (pickedGrains.size() != 0)
+				{
+					if (!pickedGrain(cells[i]->cell->getGrain()))
+					{
+						continue;
+					}
 				}
 				if (cells[i]->neighbours != 0)
 				{
@@ -148,6 +156,32 @@ public:
 		}
 		slices.erase(slices.end() - 1);
 	};
+
+	virtual void addPickedGrain(int grainID)
+	{
+		pickedGrains.push_back(grainID);
+		int count = ((int)size[0] * (int)size[1] * (int)size[2]);
+		for (int i = 0; i < count; i++)
+		{
+			if (cells[i] == nullptr)
+			{
+				continue;
+			}
+			if ( cells[i]->cell->getGrain() == grainID)
+			{
+				cells[i]->neighbours += 128;
+			}
+		}
+	};
+	virtual void removePickedGrain(int grainID)
+	{
+		///... todo
+	};
+	virtual void earsePickedGrains()
+	{
+		pickedGrains.clear();
+	};
+
 	shared_ptr<Cell> ifHit(DirectX::XMVECTOR origin, DirectX::XMVECTOR direction) override
 			{
 				if (this == nullptr)
@@ -296,6 +330,18 @@ private:
 		}
 		return false;
 	};
+
+	bool pickedGrain(int grainID) 
+	{
+		for (auto& pickedGrainID : pickedGrains)
+		{
+			if (pickedGrainID == grainID)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 	// Public static - Cube default impl.
 public:

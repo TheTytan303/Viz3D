@@ -261,3 +261,5 @@ __pycache__/
 *.pyc
 /samples/Model_16ziaren_250x250x250.txt
 *.txt
+/samples/Model_16ziaren_250x250x250 — kopia.xyz
+/samples/state_10x10x10_2.xyz

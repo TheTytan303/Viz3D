@@ -30,14 +30,16 @@ class App {
 	std::vector<std::shared_ptr<Surface>> surfaces;
 	std::vector<std::shared_ptr<Hexal>> hexals;
 	std::vector<std::shared_ptr<HexalFrame>> hexalFrames;
+	//std::vector<int> pickedGrains;
+	std::map<int, bool> pickedGrains;
 	bool show_gui_window = true;
 	float pX = 0;
 	float pY = 0;
 	int cX = 0;
 	int cY = 0;
 	int cellType=0;
-	unsigned int windowWidth = 800;
-	unsigned int windowHeight = 600;
+	unsigned int windowWidth = 1200;
+	unsigned int windowHeight = 900;
 	enum CellType {
 		CubeCell,
 		Hexal
